@@ -1,4 +1,4 @@
-import { Route, Routes, Navigate} from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import { NavBar } from "./Components/NavBar.jsx";
 import { Login } from "./Routes/Login/Login.jsx";
 import { Registrar } from "./Routes/Registros/Registrar.jsx";
@@ -10,6 +10,7 @@ import { Table_Users } from "./Routes/Admin/Gestion-Usuario/Table_Users.jsx";
 import { Table_Products } from "./Routes/Admin/Gestion-Productos/Table_Products.jsx";
 import { Table_Delivery } from "./Routes/Admin/Gestion-Delivery/Table_Delivery.jsx";
 import { useState } from "react";
+import { Reportes } from "./Routes/Admin/Reports/Reportes.jsx";
 
 function App() {
   const [mostrarLogin, setMostrarLogin] = useState(false);
@@ -29,6 +30,7 @@ function App() {
           <Route path="Users" element={<Table_Users />} />
           <Route path="Productos" element={<Table_Products />} />
           <Route path="Pedidos" element={<Table_Delivery />} />
+          <Route path="Reportes" element={<Reportes />} />
         </Route>
       </Routes>
     </>

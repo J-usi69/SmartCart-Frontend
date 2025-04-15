@@ -47,7 +47,7 @@ export function Sidebar() {
           </Link>
 
           <Link
-            to="/Admin/Reports"
+            to="/Admin/Reportes"
             className="flex items-center space-x-3 px-4 py-2 hover:bg-[#1E293B] rounded-md"
           >
             <FileText size={18} />

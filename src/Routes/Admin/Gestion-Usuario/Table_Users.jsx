@@ -1,3 +1,4 @@
+import { Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
 
 const mockData = [
@@ -130,9 +131,12 @@ export const Table_Users = () => {
                       ></div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-center">
+                  <td className="px-6 py-4 text-center space-x-3">
                     <button className="text-gray-500 hover:text-indigo-600">
-                      <i className="pi pi-cog"></i>
+                      <Pencil size={18}/>
+                    </button>
+                    <button className="text-red-500 hover:text-red-800">
+                      <Trash2 size={18}/>
                     </button>
                   </td>
                 </tr>

@@ -1,3 +1,4 @@
+import { Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
 
 const sampleProducts = [
@@ -48,14 +49,7 @@ export const Table_Products = () => {
     <div className="p-6">
       {/* Toolbar */}
       <div className="flex justify-between mb-4">
-        <div className="space-x-2">
-          <button className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
-            <i className="pi pi-plus mr-2"></i>Nuevo
-          </button>
-          <button className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
-            <i className="pi pi-trash mr-2"></i>Eliminar
-          </button>
-        </div>
+        <div className="space-x-2"></div>
         <div className="flex items-center space-x-2">
           <input
             type="file"
@@ -112,10 +106,10 @@ export const Table_Products = () => {
                 </td>
                 <td className="px-4 py-3 text-center space-x-2">
                   <button className="text-indigo-600 hover:text-indigo-800">
-                    <i className="pi pi-pencil"></i>
+                    <Pencil size={18}/>
                   </button>
                   <button className="text-red-600 hover:text-red-800">
-                    <i className="pi pi-trash"></i>
+                    <Trash2 size={18} />
                   </button>
                 </td>
               </tr>
