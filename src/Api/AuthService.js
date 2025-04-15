@@ -1,6 +1,7 @@
 const BASE_URL = "https://backenddjango-production-c48c.up.railway.app";
 
 export async function loginUser(username, password) {
+  // Obtener token
   const response = await fetch(`${BASE_URL}/api-token-auth/`, {
     method: "POST",
     headers: {
@@ -12,39 +13,41 @@ export async function loginUser(username, password) {
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(data.detail || "Error al iniciar sesión");
+    throw new Error(data.detail || "Credenciales incorrectas");
   }
 
-  // Guardamos token
-  localStorage.setItem("token", data.token);
+  const token = data.token;
+  localStorage.setItem("token", token);
 
-  // Si el backend devuelve el ID del usuario, descomenta esta parte:
-  // const user = await fetchUser(data.user_id, data.token);
-  // localStorage.setItem("user", JSON.stringify(user));
-
-  return data;
-}
-
-export async function fetchUser(userId, token) {
-  const response = await fetch(`${BASE_URL}/api/users/${userId}/`, {
+  // Obtener rol
+  const roleResponse = await fetch(`${BASE_URL}/api/roles/`, {
     headers: {
       Authorization: `Token ${token}`
     }
   });
 
-  if (!response.ok) {
-    throw new Error("No se pudo obtener el usuario");
+  const roleData = await roleResponse.json();
+
+  if (!roleResponse.ok) {
+    throw new Error(roleData.detail || "No se pudo obtener el rol");
   }
 
-  return await response.json();
+  const rol = roleData.rol;
+  localStorage.setItem("rol", rol);
+
+  return { token, rol };
 }
 
 export function getToken() {
   return localStorage.getItem("token");
 }
 
-export function isAuthenticated(){
+export function isAuthenticated() {
   return !!localStorage.getItem("token");
+}
+
+export function getRol() {
+  return localStorage.getItem("rol");
 }
 
 export function logoutUser() {

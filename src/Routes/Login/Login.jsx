@@ -3,6 +3,7 @@ import { loginUser } from "../../Api/AuthService.js";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
+
 export const Login = () => {
   /*Logica para recibir los datos desde el modal*/
   const [email, setEmail] = useState("");
@@ -10,7 +11,7 @@ export const Login = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-
+  //Login de los usuarios por Roles
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
@@ -18,8 +19,21 @@ export const Login = () => {
     try {
       const data = await loginUser(email, password);
       console.log("Inicio Sesion Exitoso", data);
-
-      navigate("/Home");
+      console.log("Rol de Usuario: ", data.rol);
+      
+      switch (data.rol) {
+        case "Administrador":
+          navigate("/Admin");
+          break;
+        case "Cliente":
+          navigate("/Client");
+          break;
+        case "Delivery":
+          navigate("/Delivery");
+          break;
+        default:
+          navigate("/Home");
+      }
     } catch (err) {
       setError(err.mesage || "Error al iniciar Sesión");
     }
