@@ -38,9 +38,36 @@ export async function obtenerProductos() {
   return await response.json();
 }
 
-/*export async function editarProducto(ProductID){
-  const token=localStorage.getItem("token");
-  const response=await fetch(`${BASE_URL}/api/products/${ProductID}`,{
-    headers:
-  })
-}*/
+export async function editarProducto(ProductID, updateProduct) {
+  const token = localStorage.getItem("token");
+  const response = await fetch(`${BASE_URL}/api/products/${ProductID}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Token ${token}`,
+    },
+    body: JSON.stringify(updateProduct),
+  });
+
+  if (!response.ok) {
+    throw new Error("Error Al Editar Producto");
+  }
+  
+  return await response.json();
+}
+
+export async function EliminarProducto(ProductID){
+  const token = localStorage.getItem("token");
+  const response = await fetch(`${BASE_URL}/api/products/${ProductID}/`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Token ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Error Al Eliminar El Producto");
+  }
+  
+  return true;
+}

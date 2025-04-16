@@ -1,11 +1,17 @@
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { AgregarProductos, obtenerProductos } from "../../../Api/Product";
+import {
+  AgregarProductos,
+  obtenerProductos,
+  editarProducto,
+  EliminarProducto,
+} from "../../../Api/Product";
 
 export const Table_Products = () => {
   const [search] = useState("");
   const [showModal, setShowModal] = useState("");
   const [products, SetProducts] = useState([]);
+  const [EditarProducto, setEditarProducto] = useState(null);
   const [newProduct, setNewProduct] = useState({
     name: "",
     description: "",
@@ -15,11 +21,24 @@ export const Table_Products = () => {
     is_available: true,
   });
 
-  /*const statusStyle = {
-    INSTOCK: "bg-green-100 text-green-800",
-    LOWSTOCK: "bg-yellow-100 text-yellow-800",
-    OUTOFSTOCK: "bg-red-100 text-red-800",
-  };*/
+  const handleEditChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setEditarProducto((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await editarProducto(EditarProducto.id, EditarProducto);
+      alert("Producto editado con éxito");
+      setEditarProducto(null); // cerrar modal
+    } catch (error) {
+      console.error("Error al editar producto", error.message);
+    }
+  };
 
   useEffect(() => {
     async function productData() {
@@ -43,6 +62,19 @@ export const Table_Products = () => {
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm("Estas Seguro De Eliminar Este Producto?")) {
+      try {
+        await EliminarProducto(id);
+        SetProducts((prev) => prev.filter((p) => p.id !== id));
+        alert("Producto Eliminado Correctamente");
+      } catch (error) {
+        console.error("Error al Eliminar", error);
+        alert("Hubo un Error al elminar el producto");
+      }
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -115,16 +147,26 @@ export const Table_Products = () => {
                 <td className="px-4 py-3">{product.description}</td>
                 <td className="px-4 py-3">
                   {product.is_active ? (
-                    <span className="text-green-600 font-medium">Disponible</span>
+                    <span className="text-green-600 font-medium">
+                      Disponible
+                    </span>
                   ) : (
-                    <span className="text-red-600 font-medium">No Disponible</span>
+                    <span className="text-red-600 font-medium">
+                      No Disponible
+                    </span>
                   )}
                 </td>
                 <td className="px-4 py-3 text-center space-x-2">
-                  <button className="text-indigo-600 hover:text-indigo-800">
+                  <button
+                    onClick={() => setEditarProducto(product)}
+                    className="text-indigo-600 hover:text-indigo-800"
+                  >
                     <Pencil size={18} />
                   </button>
-                  <button className="text-red-600 hover:text-red-800">
+                  <button 
+                  className="text-red-600 hover:text-red-800"
+                  onClick={()=> handleDelete(product.id)}
+                  >
                     <Trash2 size={18} />
                   </button>
                 </td>
@@ -208,6 +250,85 @@ export const Table_Products = () => {
                   className="px-4 py-2 rounded bg-indigo-600 text-white hover:bg-indigo-700"
                 >
                   Guardar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      {EditarProducto && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md space-y-4 shadow-xl">
+            <h2 className="text-xl font-bold mb-4">Editar Producto</h2>
+            <form onSubmit={handleEditSubmit} className="space-y-3">
+              <input
+                type="text"
+                name="name"
+                value={EditarProducto.name}
+                onChange={handleEditChange}
+                placeholder="Nombre"
+                className="w-full border px-3 py-2 rounded"
+                required
+              />
+              <input
+                type="text"
+                name="description"
+                value={EditarProducto.description}
+                onChange={handleEditChange}
+                placeholder="Descripción"
+                className="w-full border px-3 py-2 rounded"
+              />
+              <input
+                type="number"
+                name="price"
+                value={EditarProducto.price}
+                onChange={handleEditChange}
+                placeholder="Precio"
+                className="w-full border px-3 py-2 rounded"
+                required
+              />
+              <input
+                type="number"
+                name="stock"
+                value={EditarProducto.stock}
+                onChange={handleEditChange}
+                placeholder="Stock"
+                className="w-full border px-3 py-2 rounded"
+                required
+              />
+              <div className="flex gap-4">
+                <label className="flex gap-2 items-center">
+                  <input
+                    type="checkbox"
+                    name="is_active"
+                    checked={EditarProducto.is_active}
+                    onChange={handleEditChange}
+                  />
+                  Activo
+                </label>
+                <label className="flex gap-2 items-center">
+                  <input
+                    type="checkbox"
+                    name="is_available"
+                    checked={EditarProducto.is_available}
+                    onChange={handleEditChange}
+                  />
+                  Disponible
+                </label>
+              </div>
+              <div className="flex justify-end gap-2">
+                <button
+                  type="button"
+                  className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400"
+                  onClick={() => setEditarProducto(null)}
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded bg-indigo-600 text-white hover:bg-indigo-700"
+                >
+                  Guardar Cambios
                 </button>
               </div>
             </form>
