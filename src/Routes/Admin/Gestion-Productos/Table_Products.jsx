@@ -1,55 +1,81 @@
-import { Pencil, Trash2 } from "lucide-react";
-import { useState } from "react";
-
-const sampleProducts = [
-  {
-    id: 1,
-    code: "P001",
-    name: "Laptop HP",
-    image: "product-bamboo-watch.jpg",
-    price: 1200,
-    category: "Electronics",
-    rating: 4,
-    inventoryStatus: "INSTOCK",
-  },
-  {
-    id: 2,
-    code: "P002",
-    name: "Camisa Polo",
-    image: "product-black-watch.jpg",
-    price: 80,
-    category: "Clothing",
-    rating: 3,
-    inventoryStatus: "LOWSTOCK",
-  },
-  {
-    id: 3,
-    code: "P003",
-    name: "Audífonos Sony",
-    image: "product-blue-band.jpg",
-    price: 150,
-    category: "Accessories",
-    rating: 5,
-    inventoryStatus: "OUTOFSTOCK",
-  },
-];
-
-const statusStyle = {
-  INSTOCK: "bg-green-100 text-green-800",
-  LOWSTOCK: "bg-yellow-100 text-yellow-800",
-  OUTOFSTOCK: "bg-red-100 text-red-800",
-};
+import { Pencil, Plus, Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { AgregarProductos, obtenerProductos } from "../../../Api/Product";
 
 export const Table_Products = () => {
-  const [search, setSearch] = useState("");
-  const filteredProducts = sampleProducts.filter((product) =>
+  const [search] = useState("");
+  const [showModal, setShowModal] = useState("");
+  const [products, SetProducts] = useState([]);
+  const [newProduct, setNewProduct] = useState({
+    name: "",
+    description: "",
+    price: "",
+    stock: 0,
+    is_active: true,
+    is_available: true,
+  });
+
+  /*const statusStyle = {
+    INSTOCK: "bg-green-100 text-green-800",
+    LOWSTOCK: "bg-yellow-100 text-yellow-800",
+    OUTOFSTOCK: "bg-red-100 text-red-800",
+  };*/
+
+  useEffect(() => {
+    async function productData() {
+      try {
+        const data = await obtenerProductos();
+        SetProducts(data);
+      } catch (error) {
+        console.error("Error al obtener productos", error.message);
+      }
+    }
+    productData();
+  }, []);
+
+  const filteredProducts = products.filter((product) =>
     product.name.toLowerCase().includes(search.toLowerCase())
   );
+
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setNewProduct((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await AgregarProductos(newProduct);
+      const data = await obtenerProductos();
+      SetProducts(data);
+      alert("Producto agregado con exito");
+      setShowModal(false);
+      setNewProduct({
+        name: "",
+        description: "",
+        price: "",
+        stock: 0,
+        is_active: true,
+        is_available: true,
+      });
+    } catch (error) {
+      console.log("Error Agregar Producto", error.message);
+    }
+  };
+
   return (
     <div className="p-6">
       {/* Toolbar */}
       <div className="flex justify-between mb-4">
-        <div className="space-x-2"></div>
+        <button
+          className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 flex items-center gap-2"
+          onClick={() => setShowModal(true)}
+        >
+          <Plus size={16} /> Agregar Producto
+        </button>
         <div className="flex items-center space-x-2">
           <input
             type="file"
@@ -57,7 +83,7 @@ export const Table_Products = () => {
             accept="image/*"
           />
           <button className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
-            <i className="pi pi-upload mr-2"></i>Exportar
+            Exportar
           </button>
         </div>
       </div>
@@ -69,10 +95,8 @@ export const Table_Products = () => {
             <tr>
               <th className="px-4 py-3">Código</th>
               <th className="px-4 py-3">Nombre</th>
-              <th className="px-4 py-3">Imagen</th>
               <th className="px-4 py-3">Precio</th>
-              <th className="px-4 py-3">Categoría</th>
-              <th className="px-4 py-3">Rating</th>
+              <th className="px-4 py-3">Descripción</th>
               <th className="px-4 py-3">Estado</th>
               <th className="px-4 py-3 text-center">Acciones</th>
             </tr>
@@ -83,30 +107,22 @@ export const Table_Products = () => {
                 key={product.id}
                 className="bg-white border-b hover:bg-gray-50"
               >
-                <td className="px-4 py-3 font-medium">{product.code}</td>
+                <td className="px-4 py-3 font-medium">{product.id}</td>
                 <td className="px-4 py-3">{product.name}</td>
                 <td className="px-4 py-3">
-                  <img
-                    src={`https://primefaces.org/cdn/primeng/images/demo/product/${product.image}`}
-                    alt={product.name}
-                    className="w-16 rounded"
-                  />
+                  ${Number(product.price).toFixed(2)}
                 </td>
-                <td className="px-4 py-3">${product.price.toFixed(2)}</td>
-                <td className="px-4 py-3">{product.category}</td>
-                <td className="px-4 py-3">{"★".repeat(product.rating)}</td>
+                <td className="px-4 py-3">{product.description}</td>
                 <td className="px-4 py-3">
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                      statusStyle[product.inventoryStatus]
-                    }`}
-                  >
-                    {product.inventoryStatus}
-                  </span>
+                  {product.is_active ? (
+                    <span className="text-green-600 font-medium">Disponible</span>
+                  ) : (
+                    <span className="text-red-600 font-medium">No Disponible</span>
+                  )}
                 </td>
                 <td className="px-4 py-3 text-center space-x-2">
                   <button className="text-indigo-600 hover:text-indigo-800">
-                    <Pencil size={18}/>
+                    <Pencil size={18} />
                   </button>
                   <button className="text-red-600 hover:text-red-800">
                     <Trash2 size={18} />
@@ -117,6 +133,87 @@ export const Table_Products = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Modal para agregar producto */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md space-y-4 shadow-xl">
+            <h2 className="text-xl font-bold mb-4">Agregar Producto</h2>
+            <form onSubmit={handleSubmit} className="space-y-3">
+              <input
+                type="text"
+                name="name"
+                value={newProduct.name}
+                onChange={handleInputChange}
+                placeholder="Nombre"
+                className="w-full border px-3 py-2 rounded"
+                required
+              />
+              <input
+                type="text"
+                name="description"
+                value={newProduct.description}
+                onChange={handleInputChange}
+                placeholder="Descripción"
+                className="w-full border px-3 py-2 rounded"
+              />
+              <input
+                type="number"
+                name="price"
+                value={newProduct.price}
+                onChange={handleInputChange}
+                placeholder="Precio"
+                className="w-full border px-3 py-2 rounded"
+                required
+              />
+              <input
+                type="number"
+                name="stock"
+                value={newProduct.stock}
+                onChange={handleInputChange}
+                placeholder="Stock"
+                className="w-full border px-3 py-2 rounded"
+                required
+              />
+              <div className="flex gap-4">
+                <label className="flex gap-2 items-center">
+                  <input
+                    type="checkbox"
+                    name="is_active"
+                    checked={newProduct.is_active}
+                    onChange={handleInputChange}
+                  />
+                  Activo
+                </label>
+                <label className="flex gap-2 items-center">
+                  <input
+                    type="checkbox"
+                    name="is_available"
+                    checked={newProduct.is_available}
+                    onChange={handleInputChange}
+                  />
+                  Disponible
+                </label>
+              </div>
+              <div className="flex justify-end gap-2">
+                <button
+                  type="button"
+                  className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400"
+                  onClick={() => setShowModal(false)}
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded bg-indigo-600 text-white hover:bg-indigo-700"
+                >
+                  Guardar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

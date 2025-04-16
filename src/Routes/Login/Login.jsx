@@ -1,9 +1,21 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { loginUser } from "../../Api/AuthService";
 
 export const Login = ({ onClose }) => {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      await loginUser(username, password);
+      alert("Inicio de sesion exitoso");
+      console.log("Inicio de sesion exitoso");
+    } catch (err) {
+      alert(err.message);
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -25,10 +37,10 @@ export const Login = ({ onClose }) => {
               Correo electrónico
             </label>
             <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="correo@ejemplo.com"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Usuario"
               className="w-full px-4 py-2 border border-gray-300 rounded-md"
             />
           </div>
@@ -43,7 +55,7 @@ export const Login = ({ onClose }) => {
             />
           </div>
           <button
-            type="submit"
+            onClick={handleLogin}
             className="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 transition"
           >
             Iniciar Sesión
@@ -51,10 +63,7 @@ export const Login = ({ onClose }) => {
         </form>
         <p className="text-sm text-center text-gray-500 mt-4">
           ¿No tienes cuenta?{" "}
-          <Link
-            to="/Registers"
-            className="text-indigo-600 hover:underline"
-          >
+          <Link to="/Registers" className="text-indigo-600 hover:underline">
             Registrar
           </Link>
         </p>
