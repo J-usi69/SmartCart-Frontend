@@ -12,6 +12,9 @@ import { Table_Delivery } from "./Routes/Admin/Gestion-Delivery/Table_Delivery.j
 import { useState } from "react";
 import { Reportes } from "./Routes/Admin/Reports/Reportes.jsx";
 import { Products } from "./Routes/Client/Shopping/Products.jsx";
+import { Carrito } from "./Routes/Client/Shopping/Carrito.jsx";
+import { Pedido } from "./Routes/Client/Chat/Pedido.jsx";
+import { Historial } from "./Routes/Client/History/Historial.jsx";
 
 function App() {
   const [mostrarLogin, setMostrarLogin] = useState(false);
@@ -26,8 +29,13 @@ function App() {
         <Route path="/Home" element={<Home />} />
         <Route path="/Registers" element={<Registrar />} />
 
-        <Route path="Products" element={<Products />}/>
-        <Route path="/Client" element={<Cliente />}/>
+        <Route path="Products" element={<Products />} />
+
+        <Route path="/Client" element={<Cliente />}>
+          <Route path="Carrito" element={<Carrito />} />
+          <Route path="Pedido" element={<Pedido />} />
+          <Route path="Ver_Historial" element={<Historial/>}></Route>
+        </Route>
 
         <Route path="/Delivery" element={<Delivery />} />
 
