@@ -10,6 +10,7 @@ export const NavBar = ({ onLoginClick }) => {
             <Link to="/Client" className="text-white px-3 py-2">CLIENTE</Link>
             <Link to="/Delivery" className="text-white px-3 py-2">DELIVERY</Link>
             <Link to="/Home" className="text-white px-3 py-2">HOME</Link>
+            <Link to="/Products" className="text-white px-3 py-2">PRODUCTOS</Link>
           </div>
           <div>
             <button

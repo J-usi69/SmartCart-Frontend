@@ -11,6 +11,7 @@ import { Table_Products } from "./Routes/Admin/Gestion-Productos/Table_Products.
 import { Table_Delivery } from "./Routes/Admin/Gestion-Delivery/Table_Delivery.jsx";
 import { useState } from "react";
 import { Reportes } from "./Routes/Admin/Reports/Reportes.jsx";
+import { Products } from "./Routes/Client/Shopping/Products.jsx";
 
 function App() {
   const [mostrarLogin, setMostrarLogin] = useState(false);
@@ -24,8 +25,12 @@ function App() {
         <Route path="/" element={<Navigate to="/Home" replace />} />
         <Route path="/Home" element={<Home />} />
         <Route path="/Registers" element={<Registrar />} />
-        <Route path="/Client" element={<Cliente />} />
+
+        <Route path="Products" element={<Products />}/>
+        <Route path="/Client" element={<Cliente />}/>
+
         <Route path="/Delivery" element={<Delivery />} />
+
         <Route path="/Admin" element={<Administrador />}>
           <Route path="Users" element={<Table_Users />} />
           <Route path="Productos" element={<Table_Products />} />

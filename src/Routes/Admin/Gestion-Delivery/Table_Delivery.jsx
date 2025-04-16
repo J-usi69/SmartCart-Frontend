@@ -44,7 +44,7 @@ export const Table_Delivery = () => {
     d.name.toLowerCase().includes(search.toLowerCase())
   );
   return (
-    <div className="p-6">
+    <div className="px-4 md:px-12 lg:px-24 py-6">
       <div className="flex justify-between mb-4">
         <h2 className="text-xl font-bold">Gestión de Repartidores</h2>
         <input
@@ -97,10 +97,10 @@ export const Table_Delivery = () => {
                 </td>
                 <td className="px-4 py-3 text-center space-x-2">
                   <button className="text-indigo-600 hover:text-indigo-800">
-                    <Pencil size={18}/>
+                    <Pencil size={18} />
                   </button>
                   <button className="text-red-600 hover:text-red-800">
-                    <Trash2 size={18}/>
+                    <Trash2 size={18} />
                   </button>
                 </td>
               </tr>
