@@ -1,65 +1,53 @@
-import { Pencil, Trash2 } from "lucide-react";
-import { useState } from "react";
-
-const mockData = [
-  {
-    id: 1,
-    name: "Juan Pérez",
-    country: "Bolivia",
-    representative: "Carlos Ruiz",
-    date: "2024-04-01",
-    balance: 2300,
-    status: "Activo",
-    activity: 80,
-  },
-  {
-    id: 2,
-    name: "Ana López",
-    country: "Chile",
-    representative: "María Díaz",
-    date: "2024-03-28",
-    balance: 1500,
-    status: "Pendiente",
-    activity: 60,
-  },
-  {
-    id: 3,
-    name: "Luis Mendoza",
-    country: "Perú",
-    representative: "Gabriel Núñez",
-    date: "2024-03-20",
-    balance: 300,
-    status: "Inactivo",
-    activity: 30,
-  },
-];
-
-const getStatusColor = (status) => {
-  switch (status) {
-    case "Activo":
-      return "bg-green-100 text-green-800";
-    case "Pendiente":
-      return "bg-yellow-100 text-yellow-800";
-    case "Inactivo":
-      return "bg-red-100 text-red-800";
-    default:
-      return "bg-gray-100 text-gray-800";
-  }
-};
-
+import { Pencil, Plus, Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { obtenerUsuarios, EditarUsuarios } from "../../../Api/Users";
 
 export const Table_Users = () => {
   const [search, setSearch] = useState("");
+  const [users, setUsers] = useState([]);
+  const [EditarUsuario, setEditarUsuario] = useState(null);
 
-  const filteredData = mockData.filter((item) =>
-    item.name.toLowerCase().includes(search.toLowerCase())
+  const handleEditChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setEditarUsuario((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await EditarUsuarios(EditarUsuario.id, EditarUsuario);
+      alert("Producto editado con éxito");
+      const updatedUsers = await obtenerUsuarios();
+      setEditarUsuario(updatedUsers); // cerrar modal
+    } catch (error) {
+      console.error("Error al editar producto", error.message);
+    }
+  };
+
+  useEffect(() => {
+    async function UserData() {
+      try {
+        const data = await obtenerUsuarios();
+        setUsers(data);
+      } catch (error) {
+        console.error("Error al obtener productos", error.message);
+      }
+    }
+    UserData();
+  }, []);
+
+  const filteredData = users.filter((user) =>
+    user?.nombre?.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
     <div className="p-6">
       <div className="flex justify-between mb-4">
-        <button className="bg-gray-200 px-3 py-1 rounded-md hover:bg-gray-300">
-          Limpiar filtros
+        <button className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 flex items-center gap-2">
+          <Plus size={18} /> Agregar Usuario
         </button>
         <input
           type="text"
@@ -75,25 +63,25 @@ export const Table_Users = () => {
           <thead className="text-xs text-white uppercase bg-gray-800">
             <tr>
               <th scope="col" className="px-6 py-3">
+                Codigo
+              </th>
+              <th scope="col" className="px-6 py-3">
                 Nombre
               </th>
               <th scope="col" className="px-6 py-3">
-                País
+                Apellido
               </th>
               <th scope="col" className="px-6 py-3">
-                Agente
+                Correo
               </th>
               <th scope="col" className="px-6 py-3">
-                Fecha
+                Password
               </th>
               <th scope="col" className="px-6 py-3">
-                Balance
+                Rol
               </th>
               <th scope="col" className="px-6 py-3">
                 Estado
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Actividad
               </th>
               <th scope="col" className="px-6 py-3 text-center">
                 Acción
@@ -102,41 +90,45 @@ export const Table_Users = () => {
           </thead>
           <tbody>
             {filteredData.length > 0 ? (
-              filteredData.map((item) => (
+              filteredData.map((user) => (
                 <tr
-                  key={item.id}
+                  key={user.id}
                   className="bg-white border-b hover:bg-gray-50"
                 >
                   <td className="px-6 py-4 font-medium text-gray-900">
-                    {item.name}
+                    {user.id}
                   </td>
-                  <td className="px-6 py-4">{item.country}</td>
-                  <td className="px-6 py-4">{item.representative}</td>
-                  <td className="px-6 py-4">{item.date}</td>
-                  <td className="px-6 py-4">${item.balance.toFixed(2)}</td>
+                  <td className="px-6 py-4">{user.nombre}</td>
+                  <td className="px-6 py-4">{user.apellido}</td>
+                  <td className="px-6 py-4">{user.correo}</td>
+                  <td className="px-6 py-4">{user.password}</td>
                   <td className="px-6 py-4">
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-semibold ${getStatusColor(
-                        item.status
-                      )}`}
-                    >
-                      {item.status}
-                    </span>
+                    {user.is_staff ? (
+                      <span className="text-green-600 font-medium">
+                        Administrador
+                      </span>
+                    ) : (
+                      <span className="text-red-600 font-medium">Cliente</span>
+                    )}
                   </td>
                   <td className="px-6 py-4">
-                    <div className="w-full bg-gray-200 rounded-full h-2.5">
-                      <div
-                        className="bg-blue-600 h-2.5 rounded-full"
-                        style={{ width: `${item.activity}%` }}
-                      ></div>
-                    </div>
+                    {user.is_active ? (
+                      <span className="text-green-600 font-medium">Activo</span>
+                    ) : (
+                      <span className="text-red-600 font-medium">
+                        No Activo
+                      </span>
+                    )}
                   </td>
                   <td className="px-6 py-4 text-center space-x-3">
-                    <button className="text-gray-500 hover:text-indigo-600">
-                      <Pencil size={18}/>
+                    <button
+                      className="text-gray-500 hover:text-indigo-600"
+                      onClick={() => setEditarUsuario(user)}
+                    >
+                      <Pencil size={18} />
                     </button>
                     <button className="text-red-500 hover:text-red-800">
-                      <Trash2 size={18}/>
+                      <Trash2 size={18} />
                     </button>
                   </td>
                 </tr>
@@ -151,6 +143,91 @@ export const Table_Users = () => {
           </tbody>
         </table>
       </div>
+      {EditarUsuario && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md space-y-4 shadow-xl">
+            <h2 className="text-xl font-bold mb-4">Editar Usuario</h2>
+            <form onSubmit={handleEditSubmit} className="space-y-3">
+              <input
+                type="text"
+                name="nombre"
+                value={EditarUsuario.nombre}
+                onChange={handleEditChange}
+                placeholder="Nombre"
+                className="w-full border px-3 py-2 rounded"
+                required
+              />
+              <input
+                type="text"
+                name="apellido"
+                value={EditarUsuario.apellido}
+                onChange={handleEditChange}
+                placeholder="Apellido"
+                className="w-full border px-3 py-2 rounded"
+              />
+              <input
+                type="text"
+                name="correo"
+                value={EditarUsuario.correo}
+                onChange={handleEditChange}
+                placeholder="Correo"
+                className="w-full border px-3 py-2 rounded"
+                required
+              />
+              <input
+                type="password"
+                name="password"
+                value={EditarUsuario.password || ""}
+                onChange={handleEditChange}
+                placeholder="Contraseña"
+                className="w-full border px-3 py-2 rounded"
+                required
+              />
+              <input
+                type="number"
+                name="rol_id"
+                value={EditarUsuario.rol_id}
+                onChange={handleEditChange}
+              />
+              {/* <div className="flex gap-4">
+                <label className="flex gap-2 items-center">
+                  <input
+                    type="checkbox"
+                    name="is_active"
+                    checked={EditarUsuario.is_active}
+                    onChange={handleEditChange}
+                  />
+                  Activo
+                </label>
+                <label className="flex gap-2 items-center">
+                  <input
+                    type="checkbox"
+                    name="is_staff"
+                    checked={EditarUsuario.is_staff}
+                    onChange={handleEditChange}
+                  />
+                  Administrador
+                </label>
+              </div>*/}
+              <div className="flex justify-end gap-2">
+                <button
+                  type="button"
+                  className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400"
+                  onClick={() => setEditarUsuario(null)}
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded bg-indigo-600 text-white hover:bg-indigo-700"
+                >
+                  Guardar Cambios
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
