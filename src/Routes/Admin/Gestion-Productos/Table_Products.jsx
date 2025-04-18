@@ -129,6 +129,7 @@ export const Table_Products = () => {
               <th className="px-4 py-3">Nombre</th>
               <th className="px-4 py-3">Precio</th>
               <th className="px-4 py-3">Descripción</th>
+              <th className="px-4 py-3">Stock</th>
               <th className="px-4 py-3">Estado</th>
               <th className="px-4 py-3 text-center">Acciones</th>
             </tr>
@@ -145,6 +146,7 @@ export const Table_Products = () => {
                   ${Number(product.price).toFixed(2)}
                 </td>
                 <td className="px-4 py-3">{product.description}</td>
+                <td className="px-4 py-3">{product.stock}</td>
                 <td className="px-4 py-3">
                   {product.is_active ? (
                     <span className="text-green-600 font-medium">
