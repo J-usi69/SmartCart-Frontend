@@ -1,73 +1,111 @@
 // src/Context/CarritoContext.jsx
-import { createContext, useContext, useReducer } from "react";
+import { createContext, useContext, useState } from "react";
+import {
+  crearCarrito,
+  obtenerCarritos,
+  eliminarCarrito,
+  actualizarCarrito,
+} from "../Api/Carrito";
+import {
+  agregarItemAlCarrito,
+  obtenerItemsCarrito,
+  eliminarItemCarrito,
+  actualizarItemCarrito,
+} from "../Api/CarritoItem";
 
 const CartContext = createContext();
 
-const initialState = {
-  items: [],
-};
-
-function cartReducer(state, action) {
-  switch (action.type) {
-    case "ADD_TO_CART": {
-      const existing = state.items.find(item => item.id === action.payload.id);
-      if (existing) {
-        return {
-          ...state,
-          items: state.items.map(item =>
-            item.id === action.payload.id && item.quantity < item.stock
-              ? { ...item, quantity: item.quantity + 1 }
-              : item
-          )
-        };
-      }
-      return {
-        ...state,
-        items: [...state.items, { ...action.payload, quantity: 1 }]
-      };
-    }
-
-    case "REMOVE_FROM_CART":
-      return {
-        ...state,
-        items: state.items.filter(item => item.id !== action.payload)
-      };
-
-    case "DECREASE_QUANTITY":
-      return {
-        ...state,
-        items: state.items.map(item =>
-          item.id === action.payload && item.quantity > 1
-            ? { ...item, quantity: item.quantity - 1 }
-            : item
-        )
-      };
-
-    case "CLEAR_CART":
-      return { items: [] };
-
-    default:
-      return state;
-  }
-}
-
 export const CartProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(cartReducer, initialState);
+  const [cart, setCart] = useState([]);
+  const [cartId, setCartId] = useState(null); // carrito del usuario actual
 
-  const addToCart = (producto) => dispatch({ type: "ADD_TO_CART", payload: producto });
-  const removeFromCart = (id) => dispatch({ type: "REMOVE_FROM_CART", payload: id });
-  const decreaseQuantity = (id) => dispatch({ type: "DECREASE_QUANTITY", payload: id });
-  const clearCart = () => dispatch({ type: "CLEAR_CART" });
+  const inicializarCarrito = async () => {
+    try {
+      const data = await crearCarrito();
+      setCartId(data.id);
+    } catch (error) {
+      console.error("Error creando carrito:", error);
+    }
+  };
+
+  const addToCart = async (producto) => {
+    try {
+      const existe = cart.find((p) => p.id === producto.id);
+      if (!existe) {
+        const res = await agregarItemAlCarrito(producto.id, 1, cartId);
+        setCart((prev) => [
+          ...prev,
+          { ...producto, quantity: 1, itemId: res.id }, // 👈 importante
+        ]);
+      }
+    } catch (error) {
+      console.error("Error agregando al carrito:", error);
+    }
+  };
+
+  const removeFromCart = async (productId) => {
+    try {
+      const item = cart.find((i) => i.id === productId);
+      if (item) {
+        await eliminarItemCarrito(item.itemId); // necesitas tener `itemId` (el ID del ítem en la API)
+        setCart((prev) => prev.filter((p) => p.id !== productId));
+      }
+    } catch (error) {
+      console.error("Error eliminando del carrito:", error);
+    }
+  };
+
+  const clearCart = async () => {
+    try {
+      await eliminarCarrito(cartId);
+      setCart([]);
+      setCartId(null);
+    } catch (error) {
+      console.error("Error vaciando carrito:", error);
+    }
+  };
+
+  const aumentarCantidad = async (itemId, currentQuantity, productId) => {
+    try {
+      const nuevaCantidad = currentQuantity + 1;
+      await actualizarItemCarrito(itemId, nuevaCantidad, productId);
+      setCart((prev) =>
+        prev.map((item) =>
+          item.itemId === itemId ? { ...item, quantity: nuevaCantidad } : item
+        )
+      );
+    } catch (error) {
+      console.error("Error al aumentar cantidad:", error);
+    }
+  };
+
+  const disminuirCantidad = async (itemId, currentQuantity, productId) => {
+    try {
+      if (currentQuantity > 1) {
+        const nuevaCantidad = currentQuantity - 1;
+        await actualizarItemCarrito(itemId, nuevaCantidad, productId);
+        setCart((prev) =>
+          prev.map((item) =>
+            item.itemId === itemId ? { ...item, quantity: nuevaCantidad } : item
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Error al disminuir cantidad:", error);
+    }
+  };
 
   return (
     <CartContext.Provider
       value={{
-        cart: state.items,
+        cart,
+        cartId,
+        inicializarCarrito,
         addToCart,
         removeFromCart,
-        decreaseQuantity,
         clearCart,
-        dispatch, // también lo exponemos si quieres usarlo directamente
+        aumentarCantidad,
+        disminuirCantidad,
       }}
     >
       {children}

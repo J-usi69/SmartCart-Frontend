@@ -3,7 +3,11 @@ import { useCart } from "../../../Context/CarritoContext.jsx";
 import { Minus, Plus, Trash2 } from "lucide-react";
 
 export const Carrito = () => {
-  const { cart, addToCart, decreaseQuantity, removeFromCart, clearCart } = useCart();
+  const {   cart,
+    clearCart,
+    removeFromCart,
+    aumentarCantidad,
+    disminuirCantidad, } = useCart();
 
   const total = cart.reduce((sum, item) => sum + Number(item.price * item.quantity), 0);
 
@@ -34,13 +38,13 @@ export const Carrito = () => {
                   <td className="p-3 text-center">{Number(item.quantity)}</td>
                   <td className="p-3 space-x-2">
                     <button
-                      onClick={() => decreaseQuantity(item.id)}
+                      onClick={() => disminuirCantidad(item.itemId,item.quantity,item.id)}
                       className="text-red-600 hover:text-red-800"
                     >
                       <Minus size={18} />
                     </button>
                     <button
-                      onClick={() => addToCart(item)}
+                      onClick={() => aumentarCantidad(item.itemId,item.quantity,item.id)}
                       disabled={item.quantity >= item.stock}
                       className="text-green-600 hover:text-green-800"
                     >
@@ -62,6 +66,11 @@ export const Carrito = () => {
             <span className="text-xl font-semibold">
               Total: ${total.toFixed(2)}
             </span>
+            <button
+              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-red-700"
+            >
+              Realizar Pago
+            </button>
             <button
               onClick={clearCart}
               className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
