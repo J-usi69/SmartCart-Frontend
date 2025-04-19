@@ -1,4 +1,4 @@
-const BASE_URL = "http://127.0.0.1:8000/";
+const BASE_URL = "https://backenddjango-production-c48c.up.railway.app";
 
 export async function loginUser(username, password) {
   const response = await fetch(`${BASE_URL}/api-token-auth/`, {

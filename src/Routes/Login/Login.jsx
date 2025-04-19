@@ -10,6 +10,8 @@ export const Login = ({ onClose }) => {
     e.preventDefault();
     try {
       await loginUser(username, password);
+      localStorage.setItem("isAuthenticated","true");
+      window.dispatchEvent(new Event("authChange"));
       alert("Inicio de sesion exitoso");
       console.log("Inicio de sesion exitoso");
     } catch (err) {
@@ -37,7 +39,7 @@ export const Login = ({ onClose }) => {
               Correo electrónico
             </label>
             <input
-              type="text"
+              type="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="Usuario"

@@ -2,13 +2,10 @@
 import { createContext, useContext, useState } from "react";
 import {
   crearCarrito,
-  obtenerCarritos,
   eliminarCarrito,
-  actualizarCarrito,
 } from "../Api/Carrito";
 import {
   agregarItemAlCarrito,
-  obtenerItemsCarrito,
   eliminarItemCarrito,
   actualizarItemCarrito,
 } from "../Api/CarritoItem";
@@ -105,7 +102,7 @@ export const CartProvider = ({ children }) => {
         removeFromCart,
         clearCart,
         aumentarCantidad,
-        disminuirCantidad,
+        disminuirCantidad
       }}
     >
       {children}

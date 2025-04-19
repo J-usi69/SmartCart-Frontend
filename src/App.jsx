@@ -13,7 +13,7 @@ import { useState } from "react";
 import { Reportes } from "./Routes/Admin/Reports/Reportes.jsx";
 import { Products } from "./Routes/Client/Shopping/Products.jsx";
 import { Carrito } from "./Routes/Client/Shopping/Carrito.jsx";
-import { Pedido } from "./Routes/Client/Chat/Pedido.jsx";
+import  Pedido  from "./Routes/Client/Chat/Pedido.jsx";
 import { Historial } from "./Routes/Client/History/Historial.jsx";
 
 function App() {

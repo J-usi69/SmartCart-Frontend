@@ -1,15 +1,36 @@
 // src/Routes/Client/Carrito.jsx
 import { useCart } from "../../../Context/CarritoContext.jsx";
 import { Minus, Plus, Trash2 } from "lucide-react";
+import { redirectToCheckout } from "../../../Api/Stripe.js";
+import { obtenerItemsCarrito } from "../../../Api/CarritoItem.js";
 
 export const Carrito = () => {
-  const {   cart,
+  const {
+    cart,
     clearCart,
     removeFromCart,
     aumentarCantidad,
-    disminuirCantidad, } = useCart();
+    disminuirCantidad,
+  } = useCart();
 
-  const total = cart.reduce((sum, item) => sum + Number(item.price * item.quantity), 0);
+  const handleCheckout = async () => {
+    try {
+      const items = await obtenerItemsCarrito(); // Esto te da [{ product, quantity }]
+      const payload = items.map(item => ({
+        product_id: item.product.id || item.product,
+        quantity: item.quantity,
+      }));
+      await redirectToCheckout(payload);
+    } catch (error) {
+      console.error("Error al iniciar pago:", error);
+      alert("No se pudo iniciar el pago.");
+    }
+  };
+
+  const total = cart.reduce(
+    (sum, item) => sum + Number(item.price * item.quantity),
+    0
+  );
 
   return (
     <div className="p-8">
@@ -38,13 +59,17 @@ export const Carrito = () => {
                   <td className="p-3 text-center">{Number(item.quantity)}</td>
                   <td className="p-3 space-x-2">
                     <button
-                      onClick={() => disminuirCantidad(item.itemId,item.quantity,item.id)}
+                      onClick={() =>
+                        disminuirCantidad(item.itemId, item.quantity, item.id)
+                      }
                       className="text-red-600 hover:text-red-800"
                     >
                       <Minus size={18} />
                     </button>
                     <button
-                      onClick={() => aumentarCantidad(item.itemId,item.quantity,item.id)}
+                      onClick={() =>
+                        aumentarCantidad(item.itemId, item.quantity, item.id)
+                      }
                       disabled={item.quantity >= item.stock}
                       className="text-green-600 hover:text-green-800"
                     >
@@ -67,6 +92,7 @@ export const Carrito = () => {
               Total: ${total.toFixed(2)}
             </span>
             <button
+              onClick={handleCheckout}
               className="bg-green-600 text-white px-4 py-2 rounded hover:bg-red-700"
             >
               Realizar Pago
