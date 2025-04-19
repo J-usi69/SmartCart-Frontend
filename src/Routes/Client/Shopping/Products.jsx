@@ -2,9 +2,20 @@ import { ProductCard } from "../../../Components/ProductCard";
 import { obtenerProductos } from "../../../Api/Product";
 import { useState } from "react";
 import { useEffect } from "react";
+/*import { useCart } from "../../../Context/CarritoContext.jsx";
+import { useLocation } from "react-router-dom";*/
 
 export const Products = () => {
   const [productos, setProductos] = useState([]);
+  /*const { clearCart } = useCart();
+  const location = useLocation();*/
+
+  useEffect(() => {
+    if (localStorage.getItem("pagado") === "true") {
+      localStorage.removeItem("pagado"); // limpiar marca
+      window.location.reload(); // refrescar productos
+    }
+  }, []);
 
   useEffect(() => {
     const cargarProductos = async () => {

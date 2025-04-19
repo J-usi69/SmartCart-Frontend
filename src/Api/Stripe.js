@@ -12,11 +12,12 @@ export async function redirectToCheckout(cartItems) {
       }),
     }
   );
-
   const data = await response.json();
 
-  // USAR checkout_url directamente
   if (data.checkout_url) {
+    localStorage.setItem("items_pagados", JSON.stringify(cartItems));
+    localStorage.setItem("pagado", "true");
+
     window.location.href = data.checkout_url; // redirige directamente a Stripe
   } else {
     alert("No se pudo iniciar el pago.");

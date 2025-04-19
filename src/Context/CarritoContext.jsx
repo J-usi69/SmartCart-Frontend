@@ -1,9 +1,6 @@
 // src/Context/CarritoContext.jsx
-import { createContext, useContext, useState } from "react";
-import {
-  crearCarrito,
-  eliminarCarrito,
-} from "../Api/Carrito";
+import { createContext, useContext, useEffect, useState } from "react";
+import { crearCarrito, eliminarCarrito } from "../Api/Carrito";
 import {
   agregarItemAlCarrito,
   eliminarItemCarrito,
@@ -13,7 +10,11 @@ import {
 const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState(() => {
+    const storedCart = localStorage.getItem("carrito");
+    return storedCart ? JSON.parse(storedCart) : [];
+  });
+
   const [cartId, setCartId] = useState(null); // carrito del usuario actual
 
   const inicializarCarrito = async () => {
@@ -42,24 +43,25 @@ export const CartProvider = ({ children }) => {
 
   const removeFromCart = async (productId) => {
     try {
-      const item = cart.find((i) => i.id === productId);
+      const item = cart.find(i => i.id === productId);
       if (item) {
-        await eliminarItemCarrito(item.itemId); // necesitas tener `itemId` (el ID del ítem en la API)
-        setCart((prev) => prev.filter((p) => p.id !== productId));
+        await eliminarItemCarrito(item.itemId);
       }
     } catch (error) {
-      console.error("Error eliminando del carrito:", error);
+      console.warn("Item ya fue eliminado en backend",error);
+    } finally {
+      setCart(prev => prev.filter(p => p.id !== productId));
     }
   };
 
   const clearCart = async () => {
     try {
       await eliminarCarrito(cartId);
-      setCart([]);
-      setCartId(null);
     } catch (error) {
       console.error("Error vaciando carrito:", error);
     }
+    setCart([]);
+    setCartId(null);
   };
 
   const aumentarCantidad = async (itemId, currentQuantity, productId) => {
@@ -92,6 +94,10 @@ export const CartProvider = ({ children }) => {
     }
   };
 
+  useEffect(() => {
+    localStorage.setItem("carrito", JSON.stringify(cart));
+  }, [cart]);
+
   return (
     <CartContext.Provider
       value={{
@@ -102,7 +108,7 @@ export const CartProvider = ({ children }) => {
         removeFromCart,
         clearCart,
         aumentarCantidad,
-        disminuirCantidad
+        disminuirCantidad,
       }}
     >
       {children}

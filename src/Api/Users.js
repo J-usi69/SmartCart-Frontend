@@ -44,7 +44,24 @@ export async function EditarUsuarios(UsuarioId, updateUsuario) {
   return await response.json();
 }
 
-/*export async function AgregarUsuario(newUsuario){
-    const token= localStorage.getItem("token");
+export async function RegistrarCliente(nombre, apellido, correo, password) {
+  const response = await fetch(`${BASE_URL}/api/register-cliente/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      nombre,
+      apellido,
+      correo,
+      password,
+    }),
+  });
 
-}*/
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error("Error al registrar cliente: " + JSON.stringify(errorData));
+  }
+
+  return await response.json();
+}

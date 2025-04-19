@@ -15,6 +15,7 @@ import { Products } from "./Routes/Client/Shopping/Products.jsx";
 import { Carrito } from "./Routes/Client/Shopping/Carrito.jsx";
 import  Pedido  from "./Routes/Client/Chat/Pedido.jsx";
 import { Historial } from "./Routes/Client/History/Historial.jsx";
+import { Success } from "./Routes/Client/Success.jsx";
 
 function App() {
   const [mostrarLogin, setMostrarLogin] = useState(false);
@@ -28,6 +29,7 @@ function App() {
         <Route path="/" element={<Navigate to="/Home" replace />} />
         <Route path="/Home" element={<Home />} />
         <Route path="/Registers" element={<Registrar />} />
+        <Route path="/Sucess" element={<Success/>}/>
 
         <Route path="Products" element={<Products />} />
 

@@ -15,12 +15,15 @@ export const Carrito = () => {
 
   const handleCheckout = async () => {
     try {
-      const items = await obtenerItemsCarrito(); // Esto te da [{ product, quantity }]
-      const payload = items.map(item => ({
+      const items = await obtenerItemsCarrito();
+      const payload = items.map((item) => ({
         product_id: item.product.id || item.product,
         quantity: item.quantity,
       }));
-      await redirectToCheckout(payload);
+
+      await redirectToCheckout(payload, () => {
+        clearCart(); // ✅ Limpiar carrito en frontend
+      });
     } catch (error) {
       console.error("Error al iniciar pago:", error);
       alert("No se pudo iniciar el pago.");
