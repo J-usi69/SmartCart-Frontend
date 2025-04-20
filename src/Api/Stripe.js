@@ -1,6 +1,8 @@
+const BASE_URL = import.meta.env.VITE_API_URL
+
 export async function redirectToCheckout(cartItems) {
   const response = await fetch(
-    "https://backenddjango-production-c48c.up.railway.app/api/checkout/",
+    `${BASE_URL}/checkout/`,
     {
       method: "POST",
       headers: {

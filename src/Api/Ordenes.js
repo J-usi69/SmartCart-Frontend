@@ -1,7 +1,7 @@
-const BASE_URL = "https://backenddjango-production-c48c.up.railway.app";
+const BASE_URL = import.meta.env.VITE_API_URL
 
 export async function obtenerPedidos() {
-  const response = await fetch(`${BASE_URL}/api/orders/`, {
+  const response = await fetch(`${BASE_URL}/orders/`, {
     headers: {
       Authorization: `Token ${localStorage.getItem("token")}`,
     },

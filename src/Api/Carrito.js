@@ -1,10 +1,10 @@
 import axios from "axios";
-const BASE_URL = "https://backenddjango-production-c48c.up.railway.app";
+const BASE_URL = import.meta.env.VITE_API_URL
 const token = localStorage.getItem("token");
 
 // Crear carrito
 export async function crearCarrito() {
-  const response = await fetch(`${BASE_URL}/api/cart/`, {
+  const response = await fetch(`${BASE_URL}/cart/`, {
     method: "POST",
     headers: {
       Authorization: `Token ${token}`,

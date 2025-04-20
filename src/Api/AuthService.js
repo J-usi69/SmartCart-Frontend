@@ -1,4 +1,4 @@
-const BASE_URL = "https://backenddjango-production-c48c.up.railway.app";
+const BASE_URL = import.meta.env.VITE_API_URL
 
 export async function loginUser(username, password) {
   const response = await fetch(`${BASE_URL}/api-token-auth/`, {

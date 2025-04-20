@@ -1,11 +1,11 @@
 import { getToken } from "./AuthService";
 
-const BASE_URL = "https://backenddjango-production-c48c.up.railway.app";
+const BASE_URL = import.meta.env.VITE_API_URL
 
 export async function obtenerUsuarios() {
   const token = getToken();
 
-  const response = await fetch(`${BASE_URL}/api/users/`, {
+  const response = await fetch(`${BASE_URL}/users/`, {
     headers: {
       Authorization: `Token ${token}`,
     },

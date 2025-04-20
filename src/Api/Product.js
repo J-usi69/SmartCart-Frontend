@@ -1,11 +1,11 @@
 import { getToken } from "./AuthService";
 
-const BASE_URL = "https://backenddjango-production-c48c.up.railway.app";
+const BASE_URL = import.meta.env.VITE_API_URL
 
 export async function AgregarProductos(NewProduct) {
   const token = getToken();
 
-  const response = await fetch(`${BASE_URL}/api/products/`, {
+  const response = await fetch(`${BASE_URL}/products/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

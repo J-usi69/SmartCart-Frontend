@@ -1,12 +1,12 @@
 // src/Api/CarritoItem.js
 import axios from "axios";
-const BASE_URL = "https://backenddjango-production-c48c.up.railway.app";
+const BASE_URL = import.meta.env.VITE_API_URL;
 const token = localStorage.getItem("token");
 
 // Crear item en carrito
 export async function agregarItemAlCarrito(productId, quantity, cartId) {
   console.log("Enviando al carrito:", { product: productId, quantity });
-  const response = await fetch(`${BASE_URL}/api/cart-items/`, {
+  const response = await fetch(`${BASE_URL}/cart-items/`, {
     method: "POST",
     headers: {
       Authorization: `Token ${token}`,
