@@ -26,3 +26,43 @@ export async function CrearPedido(orderItems, status = "Pendiente") {
 
   return await response.json();
 }
+
+//funcion que solo edita el estado del orden
+export async function actualizarEstadoOrden(id, newStatus) {
+  const response = await fetch(`${BASE_URL}/api/orders/${id}/`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Token ${localStorage.getItem("token")}`,
+    },
+    body: JSON.stringify({ status: newStatus }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.detail || "Error al actualizar el estado de la orden.");
+  }
+
+  return await response.json(); // respuesta con todos los datos actualizados
+}
+
+
+export async function actualizarTotalOrden(orderId, status, items) {
+  const response = await fetch(`${BASE_URL}/api/orders/${orderId}/`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Token ${localStorage.getItem("token")}`,
+    },
+    body: JSON.stringify({
+      status: status,  // "pending", "paid", etc.
+      items: items,    // array con product y quantity actualizados
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Error al actualizar la orden.");
+  }
+
+  return await response.json();
+}

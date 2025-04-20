@@ -3,11 +3,13 @@ import { useCart } from "../../../Context/CarritoContext.jsx";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { redirectToCheckout } from "../../../Api/Stripe.js";
 import { obtenerItemsCarrito } from "../../../Api/CarritoItem.js";
+import { useEffect } from "react";
 
 export const Carrito = () => {
   const {
     cart,
     clearCart,
+    addToCart,
     removeFromCart,
     aumentarCantidad,
     disminuirCantidad,
@@ -34,6 +36,15 @@ export const Carrito = () => {
     (sum, item) => sum + Number(item.price * item.quantity),
     0
   );
+
+  
+  useEffect(() => {
+    const itemEditado = JSON.parse(localStorage.getItem("editar_order_item"));
+    if (itemEditado && itemEditado.id) {
+      addToCart(itemEditado); // debe tener `.id` para funcionar
+      localStorage.removeItem("editar_order_item");
+    }
+  });
 
   return (
     <div className="p-8">

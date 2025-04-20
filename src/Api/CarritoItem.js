@@ -5,6 +5,7 @@ const token = localStorage.getItem("token");
 
 // Crear item en carrito
 export async function agregarItemAlCarrito(productId, quantity, cartId) {
+  console.log("Enviando al carrito:", { product: productId, quantity });
   const response = await fetch(`${BASE_URL}/api/cart-items/`, {
     method: "POST",
     headers: {

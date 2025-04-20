@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Pencil, Trash2 } from "lucide-react";
-import { obtenerPedidos } from "../../../Api/Ordenes";
+import { actualizarEstadoOrden, obtenerPedidos } from "../../../Api/Ordenes";
 
 export const Table_Delivery = () => {
   const [search, setSearch] = useState("");
@@ -56,7 +56,7 @@ export const Table_Delivery = () => {
             <tr>
               <th className="px-6 py-3"># Orden</th>
               <th className="px-6 py-3">Email Cliente</th>
-              <th className="px-6 py-3">Estado</th>
+              <th className="px-6 py-3">Estado Entrega</th>
               <th className="px-6 py-3">Total</th>
               <th className="px-6 py-3">Fecha</th>
               <th className="px-6 py-3">Productos</th>
@@ -65,20 +65,48 @@ export const Table_Delivery = () => {
           <tbody className="bg-white divide-y">
             {paginados.length > 0 ? (
               paginados.map((pedido) => (
-                <tr key={pedido.id} className="hover:bg-gray-100">
-                  <td className="px-6 py-3 font-medium">#{pedido.id}</td>
-                  <td className="px-6 py-3">{pedido.client_email}</td>
-                  <td className="px-6 py-3 capitalize">{pedido.status}</td>
-                  <td className="px-6 py-3">
+                <tr key={pedido.id}>
+                  <td className="px-4 py-3 font-medium">#{pedido.id}</td>
+                  <td className="px-4 py-3">{pedido.client_email}</td>
+                  <td className="px-4 py-3">
+                    <select
+                      value={pedido.status}
+                      onChange={async (e) => {
+                        try {
+                          await actualizarEstadoOrden(
+                            pedido.id,
+                            e.target.value
+                          );
+                          alert("Estado actualizado correctamente");
+                          // Recargar pedidos actualizados
+                          const data = await obtenerPedidos();
+                          setPedidos(data);
+                        } catch (error) {
+                          console.error(
+                            "Error al actualizar estado:",
+                            error.message
+                          );
+                          alert("No se pudo actualizar el estado");
+                        }
+                      }}
+                      className="border border-gray-300 rounded px-2 py-1 text-sm"
+                    >
+                      <option value="paid">Pagado</option>
+                      <option value="pendiente">Pendiente</option>
+                      <option value="entregada">Entregada</option>
+                      <option value="cancelada">Cancelada</option>
+                    </select>
+                  </td>
+                  <td className="px-4 py-3">
                     ${Number(pedido.total_price).toFixed(2)}
                   </td>
-                  <td className="px-6 py-3">
+                  <td className="px-4 py-3">
                     {new Date(pedido.created_at).toLocaleString()}
                   </td>
-                  <td className="px-6 py-3">
-                    <ul className="list-disc pl-4">
-                      {pedido.items?.map((item, idx) => (
-                        <li key={idx}>
+                  <td className="px-4 py-3">
+                    <ul className="list-disc pl-4 max-h-32 overflow-y-auto text-sm">
+                      {pedido.items.map((item, i) => (
+                        <li key={i}>
                           {item.product_name} (x{item.quantity})
                         </li>
                       ))}
