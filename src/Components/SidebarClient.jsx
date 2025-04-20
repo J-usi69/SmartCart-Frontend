@@ -32,12 +32,6 @@ import {
   
           <nav className="px-2 space-y-2">
             <SidebarLink
-              to="/Client/Pedido"
-              icon={<MessageSquareMoreIcon size={18} />}
-              label="Chat"
-              isOpen={isOpen}
-            />
-            <SidebarLink
               to="/Client/Carrito"
               icon={<ShoppingCart size={18} />}
               label="Ver Carrito"

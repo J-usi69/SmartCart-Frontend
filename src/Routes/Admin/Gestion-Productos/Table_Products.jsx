@@ -8,9 +8,11 @@ import {
 } from "../../../Api/Product";
 
 export const Table_Products = () => {
-  const [search] = useState("");
+  const [search,setSearch] = useState("");
   const [showModal, setShowModal] = useState("");
   const [products, SetProducts] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 5;
   const [EditarProducto, setEditarProducto] = useState(null);
   const [newProduct, setNewProduct] = useState({
     name: "",
@@ -56,6 +58,16 @@ export const Table_Products = () => {
     product.name.toLowerCase().includes(search.toLowerCase())
   );
 
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+  const paginated = filteredProducts.slice(
+    (currentPage - 1) * productsPerPage,
+    currentPage * productsPerPage
+  );
+
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages) setCurrentPage(page);
+  };
+
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     setNewProduct((prev) => ({
@@ -100,27 +112,25 @@ export const Table_Products = () => {
 
   return (
     <div className="p-6">
-      {/* Toolbar */}
-      <div className="flex justify-between mb-4">
+      <div className="flex justify-between items-center mb-4 flex-wrap gap-3">
         <button
           className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 flex items-center gap-2"
           onClick={() => setShowModal(true)}
         >
           <Plus size={16} /> Agregar Producto
         </button>
-        <div className="flex items-center space-x-2">
-          <input
-            type="file"
-            className="border px-2 py-1 rounded"
-            accept="image/*"
-          />
-          <button className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
-            Exportar
-          </button>
-        </div>
+        <input
+          type="text"
+          placeholder="Buscar por nombre..."
+          className="px-4 py-2 border border-gray-300 rounded-md w-72"
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setCurrentPage(1);
+          }}
+        />
       </div>
 
-      {/* Tabla */}
       <div className="overflow-x-auto shadow rounded-lg">
         <table className="min-w-full text-sm text-left text-gray-700">
           <thead className="bg-gray-800 text-white">
@@ -135,49 +145,92 @@ export const Table_Products = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredProducts.map((product) => (
-              <tr
-                key={product.id}
-                className="bg-white border-b hover:bg-gray-50"
-              >
-                <td className="px-4 py-3 font-medium">{product.id}</td>
-                <td className="px-4 py-3">{product.name}</td>
-                <td className="px-4 py-3">
-                  ${Number(product.price).toFixed(2)}
-                </td>
-                <td className="px-4 py-3">{product.description}</td>
-                <td className="px-4 py-3">{product.stock}</td>
-                <td className="px-4 py-3">
-                  {product.is_active ? (
-                    <span className="text-green-600 font-medium">
-                      Disponible
-                    </span>
-                  ) : (
-                    <span className="text-red-600 font-medium">
-                      No Disponible
-                    </span>
-                  )}
-                </td>
-                <td className="px-4 py-3 text-center space-x-2">
-                  <button
-                    onClick={() => setEditarProducto(product)}
-                    className="text-indigo-600 hover:text-indigo-800"
-                  >
-                    <Pencil size={18} />
-                  </button>
-                  <button 
-                  className="text-red-600 hover:text-red-800"
-                  onClick={()=> handleDelete(product.id)}
-                  >
-                    <Trash2 size={18} />
-                  </button>
+            {paginated.length > 0 ? (
+              paginated.map((product) => (
+                <tr
+                  key={product.id}
+                  className="bg-white border-b hover:bg-gray-50"
+                >
+                  <td className="px-4 py-3">{product.id}</td>
+                  <td className="px-4 py-3">{product.name}</td>
+                  <td className="px-4 py-3">
+                    ${Number(product.price).toFixed(2)}
+                  </td>
+                  <td className="px-4 py-3">{product.description}</td>
+                  <td className="px-4 py-3">{product.stock}</td>
+                  <td className="px-4 py-3">
+                    {product.is_active ? (
+                      <span className="text-green-600 font-medium">
+                        Disponible
+                      </span>
+                    ) : (
+                      <span className="text-red-600 font-medium">
+                        No Disponible
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-4 py-3 text-center space-x-2">
+                    <button
+                      onClick={() => setEditarProducto(product)}
+                      className="text-indigo-600 hover:text-indigo-800"
+                    >
+                      <Pencil size={18} />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(product.id)}
+                      className="text-red-600 hover:text-red-800"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td
+                  colSpan="7"
+                  className="text-center py-6 text-gray-400 italic"
+                >
+                  No se encontraron productos.
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>
 
+      {/* 🔽 PAGINACIÓN */}
+      {totalPages > 1 && (
+        <div className="flex justify-center mt-4 space-x-2">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            className="px-3 py-1 rounded bg-gray-300 hover:bg-gray-400 text-sm"
+            disabled={currentPage === 1}
+          >
+            Anterior
+          </button>
+          {[...Array(totalPages)].map((_, i) => (
+            <button
+              key={i}
+              onClick={() => handlePageChange(i + 1)}
+              className={`px-3 py-1 rounded text-sm ${
+                currentPage === i + 1
+                  ? "bg-indigo-600 text-white"
+                  : "bg-gray-200 hover:bg-gray-300"
+              }`}
+            >
+              {i + 1}
+            </button>
+          ))}
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            className="px-3 py-1 rounded bg-gray-300 hover:bg-gray-400 text-sm"
+            disabled={currentPage === totalPages}
+          >
+            Siguiente
+          </button>
+        </div>
+      )}
       {/* Modal para agregar producto */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
