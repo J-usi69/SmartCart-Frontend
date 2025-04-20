@@ -1,6 +1,6 @@
 import { getToken } from "./AuthService";
 
-const BASE_URL = import.meta.env.VITE_API_URL
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 export async function obtenerUsuarios() {
   const token = getToken();
@@ -64,4 +64,41 @@ export async function RegistrarCliente(nombre, apellido, correo, password) {
   }
 
   return await response.json();
+}
+
+export async function eliminarUsuario(UsuarioId) {
+  const token = localStorage.getItem("token");
+  const response = await fetch(`${BASE_URL}/users/${UsuarioId}/`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Token ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Error Al Eliminar El Producto");
+  }
+
+  return true;
+}
+
+export async function agregarUsuario(NewUser) {
+  const token = getToken();
+
+  const response = await fetch(`${BASE_URL}/users/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Token ${token}`,
+    },
+    body: JSON.stringify(NewUser),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.detail || "Error al agregar el producto");
+  }
+
+  return data;
 }

@@ -1,15 +1,27 @@
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { obtenerUsuarios, EditarUsuarios } from "../../../Api/Users";
+import {
+  obtenerUsuarios,
+  EditarUsuarios,
+  eliminarUsuario,
+  agregarUsuario,
+} from "../../../Api/Users";
 
 export const Table_Users = () => {
   const [search, setSearch] = useState("");
   const [users, setUsers] = useState([]);
-  //const [EditarUsuario, setEditarUsuario] = useState(null);
+  const [EditarUsuario, setEditarUsuario] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 5;
-
-
+  const [showModal, setShowModal] = useState("");
+  const [newUsuario, SetNewUsuario] = useState({
+    name: "",
+    apellido: "",
+    correo: "",
+    password: "",
+    is_staff: false,
+    is_active: true,
+  });
 
   useEffect(() => {
     async function UserData() {
@@ -27,6 +39,64 @@ export const Table_Users = () => {
     user?.nombre?.toLowerCase().includes(search.toLowerCase())
   );
 
+  const handleEditChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setEditarUsuario((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await EditarUsuarios(EditarUsuario.id, EditarUsuario);
+      alert("Usuario actualizado correctamente");
+      setEditarUsuario(null);
+
+      // Recargar lista actualizada
+      const data = await obtenerUsuarios();
+      setUsers(data);
+    } catch (error) {
+      console.error("Error al editar usuario:", error.message);
+      alert("No se pudo actualizar el usuario");
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm("Estas Seguro De Eliminar Este Usuario?")) {
+      try {
+        await eliminarUsuario(id);
+        setUsers((prev) => prev.filter((p) => p.id !== id));
+        alert("Usuario Eliminado Correctamente");
+      } catch (error) {
+        console.error("Error al Eliminar", error);
+        alert("Hubo un Error al elminar el usuario");
+      }
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await agregarUsuario(newUsuario);
+      const data = await obtenerUsuarios();
+      setUsers(data);
+      alert("Usuario agregado con exito");
+      setShowModal(false);
+      SetNewUsuario({
+        name: "",
+        apellido: "",
+        correo: "",
+        password: "",
+        is_active: true,
+        is_staff: "",
+      });
+    } catch (error) {
+      console.log("Error Agregar Usuario", error.message);
+    }
+  };
+
   const totalPages = Math.ceil(filteredData.length / usersPerPage);
   const paginatedUsers = filteredData.slice(
     (currentPage - 1) * usersPerPage,
@@ -42,7 +112,10 @@ export const Table_Users = () => {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-4 flex-wrap gap-3">
-        <button className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 flex items-center gap-2">
+        <button 
+          className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 flex items-center gap-2"
+          onClick={() => setShowModal(true)}
+          >
           <Plus size={18} /> Agregar Usuario
         </button>
         <input
@@ -99,10 +172,16 @@ export const Table_Users = () => {
                     </span>
                   </td>
                   <td className="px-6 py-3 text-center space-x-3">
-                    <button className="text-gray-500 hover:text-indigo-600">
+                    <button
+                      onClick={() => setEditarUsuario(user)}
+                      className="text-gray-500 hover:text-indigo-600"
+                    >
                       <Pencil size={18} />
                     </button>
-                    <button className="text-red-500 hover:text-red-700">
+                    <button
+                      onClick={() => handleDelete(user.id)}
+                      className="text-red-500 hover:text-red-700"
+                    >
                       <Trash2 size={18} />
                     </button>
                   </td>
@@ -152,6 +231,205 @@ export const Table_Users = () => {
           >
             Siguiente
           </button>
+        </div>
+      )}
+
+      {EditarUsuario && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl space-y-4">
+            <h2 className="text-xl font-bold mb-4">Editar Usuario</h2>
+            <form onSubmit={handleEditSubmit} className="space-y-3">
+              <input
+                type="text"
+                name="nombre"
+                value={EditarUsuario.nombre}
+                onChange={handleEditChange}
+                placeholder="Nombre"
+                className="w-full border px-3 py-2 rounded"
+                required
+              />
+              <input
+                type="text"
+                name="apellido"
+                value={EditarUsuario.apellido}
+                onChange={handleEditChange}
+                placeholder="Apellido"
+                className="w-full border px-3 py-2 rounded"
+                required
+              />
+              <input
+                type="email"
+                name="correo"
+                value={EditarUsuario.correo}
+                onChange={handleEditChange}
+                placeholder="Correo"
+                className="w-full border px-3 py-2 rounded"
+                required
+              />
+              <input
+                type="password"
+                name="password"
+                value={EditarUsuario.password}
+                onChange={handleEditChange}
+                placeholder="Nueva contraseña (opcional)"
+                className="w-full border px-3 py-2 rounded"
+              />
+              <div className="flex gap-4 items-center">
+                <label className="flex gap-2">
+                  <input
+                    type="checkbox"
+                    name="is_active"
+                    checked={EditarUsuario.is_active}
+                    onChange={handleEditChange}
+                  />
+                  Activo
+                </label>
+                <label className="flex gap-2">
+                  <input
+                    type="checkbox"
+                    name="is_staff"
+                    checked={EditarUsuario.is_staff}
+                    onChange={handleEditChange}
+                  />
+                  Administrador
+                </label>
+              </div>
+              <div className="flex justify-end gap-2">
+                <button
+                  type="button"
+                  className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded"
+                  onClick={() => setEditarUsuario(null)}
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-700 rounded"
+                >
+                  Guardar Cambios
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl space-y-4">
+            <h2 className="text-xl font-bold mb-4">Registrar Usuario</h2>
+            <form onSubmit={handleSubmit} className="space-y-3">
+              <input
+                type="text"
+                name="nombre"
+                value={newUsuario.nombre}
+                onChange={(e) =>
+                  SetNewUsuario((prev) => ({ ...prev, nombre: e.target.value }))
+                }
+                placeholder="Nombre"
+                className="w-full border px-3 py-2 rounded"
+                required
+              />
+              <input
+                type="text"
+                name="apellido"
+                value={newUsuario.apellido}
+                onChange={(e) =>
+                  SetNewUsuario((prev) => ({
+                    ...prev,
+                    apellido: e.target.value,
+                  }))
+                }
+                placeholder="Apellido"
+                className="w-full border px-3 py-2 rounded"
+                required
+              />
+              <input
+                type="email"
+                name="correo"
+                value={newUsuario.correo}
+                onChange={(e) =>
+                  SetNewUsuario((prev) => ({ ...prev, correo: e.target.value }))
+                }
+                placeholder="Correo"
+                className="w-full border px-3 py-2 rounded"
+                required
+              />
+              <input
+                type="password"
+                name="password"
+                value={newUsuario.password}
+                onChange={(e) =>
+                  SetNewUsuario((prev) => ({
+                    ...prev,
+                    password: e.target.value,
+                  }))
+                }
+                placeholder="Contraseña"
+                className="w-full border px-3 py-2 rounded"
+                required
+              />
+              <input
+                type="number"
+                name="rol_id"
+                value={newUsuario.rol_id || ""}
+                onChange={(e) =>
+                  SetNewUsuario((prev) => ({
+                    ...prev,
+                    rol_id: Number(e.target.value),
+                  }))
+                }
+                placeholder="ID de Rol (ej: 1)"
+                className="w-full border px-3 py-2 rounded"
+                required
+              />
+              <div className="flex gap-4 items-center">
+                <label className="flex gap-2">
+                  <input
+                    type="checkbox"
+                    name="is_active"
+                    checked={newUsuario.is_active}
+                    onChange={(e) =>
+                      SetNewUsuario((prev) => ({
+                        ...prev,
+                        is_active: e.target.checked,
+                      }))
+                    }
+                  />
+                  Activo
+                </label>
+                <label className="flex gap-2">
+                  <input
+                    type="checkbox"
+                    name="is_staff"
+                    checked={newUsuario.is_staff}
+                    onChange={(e) =>
+                      SetNewUsuario((prev) => ({
+                        ...prev,
+                        is_staff: e.target.checked,
+                      }))
+                    }
+                  />
+                  Administrador
+                </label>
+              </div>
+              <div className="flex justify-end gap-2">
+                <button
+                  type="button"
+                  className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded"
+                  onClick={() => setShowModal(false)}
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-green-600 text-white hover:bg-green-700 rounded"
+                >
+                  Registrar
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>

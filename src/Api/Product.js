@@ -71,3 +71,18 @@ export async function EliminarProducto(ProductID){
   
   return true;
 }
+
+export async function obtenerProductosRecomendados(){
+  const token = localStorage.getItem("token");
+  const response = await fetch(`${BASE_URL}/products/recommendations/`, {
+    headers: {
+      Authorization: `Token ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Error al obtener productos");
+  }
+
+  return await response.json();
+}

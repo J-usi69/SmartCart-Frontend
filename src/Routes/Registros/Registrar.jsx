@@ -91,7 +91,6 @@ export const Registrar = () => {
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
             <option value="">Selecciona un rol</option>
-            <option value="admin">Administrador</option>
             <option value="cliente">Cliente</option>
             <option value="delivery">Delivery</option>
           </select>
