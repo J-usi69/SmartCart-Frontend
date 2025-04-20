@@ -19,7 +19,7 @@ export async function obtenerUsuarios() {
 
 export async function EditarUsuarios(UsuarioId, updateUsuario) {
   const token = localStorage.getItem("token");
-  const response = await fetch(`${BASE_URL}/api/users/${UsuarioId}/`, {
+  const response = await fetch(`${BASE_URL}/users/${UsuarioId}/`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -45,7 +45,7 @@ export async function EditarUsuarios(UsuarioId, updateUsuario) {
 }
 
 export async function RegistrarCliente(nombre, apellido, correo, password) {
-  const response = await fetch(`${BASE_URL}/api/register-cliente/`, {
+  const response = await fetch(`${BASE_URL}/register-cliente/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

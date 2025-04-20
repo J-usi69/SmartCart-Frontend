@@ -28,7 +28,7 @@ export async function agregarItemAlCarrito(productId, quantity, cartId) {
 
 // Obtener todos los items del carrito
 export async function obtenerItemsCarrito() {
-  const response = await fetch(`${BASE_URL}/api/cart-items/`, {
+  const response = await fetch(`${BASE_URL}/cart-items/`, {
     headers: {
       Authorization: `Token ${token}`,
     },
@@ -43,7 +43,7 @@ export async function obtenerItemsCarrito() {
 
 // Eliminar item del carrito
 export async function eliminarItemCarrito(itemId) {
-  const response = await fetch(`${BASE_URL}/api/cart-items/${itemId}/`, {
+  const response = await fetch(`${BASE_URL}/cart-items/${itemId}/`, {
     method: "DELETE",
     headers: {
       Authorization: `Token ${token}`,
@@ -57,7 +57,7 @@ export async function eliminarItemCarrito(itemId) {
 
 export async function actualizarItemCarrito(itemId, quantity, productId) {
   const response = await axios.patch(
-    `${BASE_URL}/api/cart-items/${itemId}/`,
+    `${BASE_URL}/cart-items/${itemId}/`,
     {
       product: productId,
       quantity: quantity,

@@ -25,7 +25,7 @@ export async function AgregarProductos(NewProduct) {
 
 export async function obtenerProductos() {
   const token = localStorage.getItem("token");
-  const response = await fetch(`${BASE_URL}/api/products/`, {
+  const response = await fetch(`${BASE_URL}/products/`, {
     headers: {
       Authorization: `Token ${token}`,
     },
@@ -40,7 +40,7 @@ export async function obtenerProductos() {
 
 export async function editarProducto(ProductID, updateProduct) {
   const token = localStorage.getItem("token");
-  const response = await fetch(`${BASE_URL}/api/products/${ProductID}`, {
+  const response = await fetch(`${BASE_URL}/products/${ProductID}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -58,7 +58,7 @@ export async function editarProducto(ProductID, updateProduct) {
 
 export async function EliminarProducto(ProductID){
   const token = localStorage.getItem("token");
-  const response = await fetch(`${BASE_URL}/api/products/${ProductID}/`, {
+  const response = await fetch(`${BASE_URL}/products/${ProductID}/`, {
     method: "DELETE",
     headers: {
       Authorization: `Token ${token}`,

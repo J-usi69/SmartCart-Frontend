@@ -1,7 +1,7 @@
-const BASE_URL = import.meta.env.VITE_API_URL
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 export async function loginUser(username, password) {
-  const response = await fetch(`${BASE_URL}/api-token-auth/`, {
+  const response = await fetch(`${BASE_URL}-token-auth/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

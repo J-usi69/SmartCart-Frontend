@@ -13,7 +13,7 @@ export async function obtenerPedidos() {
 }
 
 export async function CrearPedido(orderItems, status = "Pendiente") {
-  const response = await fetch(`${BASE_URL}/api/orders/`, {
+  const response = await fetch(`${BASE_URL}/orders/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -29,7 +29,7 @@ export async function CrearPedido(orderItems, status = "Pendiente") {
 
 //funcion que solo edita el estado del orden
 export async function actualizarEstadoOrden(id, newStatus) {
-  const response = await fetch(`${BASE_URL}/api/orders/${id}/`, {
+  const response = await fetch(`${BASE_URL}/orders/${id}/`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -48,7 +48,7 @@ export async function actualizarEstadoOrden(id, newStatus) {
 
 
 export async function actualizarTotalOrden(orderId, status, items) {
-  const response = await fetch(`${BASE_URL}/api/orders/${orderId}/`, {
+  const response = await fetch(`${BASE_URL}/orders/${orderId}/`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",

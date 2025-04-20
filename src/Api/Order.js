@@ -14,7 +14,7 @@ export async function obtenerMisPedidos() {
 }
 
 export async function CrearOrdenesItem(productId, quantity) {
-  const response = await fetch(`${BASE_URL}/api/order-items/`, {
+  const response = await fetch(`${BASE_URL}/order-items/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -29,7 +29,7 @@ export async function CrearOrdenesItem(productId, quantity) {
 }
 
 export async function EditarOrdenesItem(productId, quantity) {
-  const response = await fetch(`${BASE_URL}/api/order-items/${productId}`,{
+  const response = await fetch(`${BASE_URL}/order-items/${productId}`,{
     method:"PATCH",
     headers:{
       "Content-Type": "application/json",
@@ -44,7 +44,7 @@ export async function EditarOrdenesItem(productId, quantity) {
 }
 
 export async function eliminarOrderItem(id) {
-  const response = await fetch(`${BASE_URL}/api/order-items/${id}/`, {
+  const response = await fetch(`${BASE_URL}/order-items/${id}/`, {
     method: "DELETE",
     headers: {
       Authorization: `Token ${localStorage.getItem("token")}`,

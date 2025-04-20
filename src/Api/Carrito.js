@@ -22,7 +22,7 @@ export async function crearCarrito() {
 
 // Obtener carritos
 export async function obtenerCarritos() {
-  const response = await fetch(`${BASE_URL}/api/cart/`, {
+  const response = await fetch(`${BASE_URL}/cart/`, {
     headers: {
       Authorization: `Token ${token}`,
     },
@@ -37,7 +37,7 @@ export async function obtenerCarritos() {
 
 // Eliminar carrito
 export async function eliminarCarrito(id) {
-  const response = await fetch(`${BASE_URL}/api/cart/${id}/`, {
+  const response = await fetch(`${BASE_URL}/cart/${id}/`, {
     method: "DELETE",
     headers: {
       Authorization: `Token ${token}`,
@@ -50,7 +50,7 @@ export async function eliminarCarrito(id) {
 }
 
 export async function actualizarCarrito(cartId, items) {
-  const response = await axios.patch(`${BASE_URL}${cartId}/`, 
+  const response = await axios.patch(`${BASE_URL}/${cartId}/`, 
     { items }, 
     { headers: { Authorization: `Token ${token}` } }
   );
