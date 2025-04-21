@@ -11,17 +11,27 @@ export async function loginUser(username, password) {
       password,
     }),
   });
-
-  const data = await response.json();
-
   if (!response.ok) {
-    throw new Error(data.detail || "Error al iniciar sesión");
+    throw new Error("Credenciales inválidas");
   }
 
-  // Guardar token
-  localStorage.setItem("token", data.token);
+  const data = await response.json(); // { token: 'abc123' }
+  const token = data.token;
+  localStorage.setItem("token", token);
 
-  return data;
+  // 🔁 Ahora obtenemos los datos del usuario
+  const userResponse = await fetch(`${BASE_URL}/me/`, {
+    headers: {
+      Authorization: `Token ${token}`,
+    },
+  });
+
+  if (!userResponse.ok) {
+    throw new Error("No se pudo obtener la información del usuario");
+  }
+
+  const user = await userResponse.json();
+  return user; //
 }
 
 export function getToken() {

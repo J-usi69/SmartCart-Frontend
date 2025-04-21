@@ -15,7 +15,7 @@ export const Table_Users = () => {
   const usersPerPage = 5;
   const [showModal, setShowModal] = useState("");
   const [newUsuario, SetNewUsuario] = useState({
-    name: "",
+    nombre: "",
     apellido: "",
     correo: "",
     password: "",

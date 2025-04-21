@@ -9,11 +9,12 @@ export const Login = ({ onClose }) => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      await loginUser(username, password);
+      const user= await loginUser(username, password);
       localStorage.setItem("isAuthenticated","true");
+      localStorage.setItem("user",JSON.stringify(user));
       window.dispatchEvent(new Event("authChange"));
+      console.log("Usuario Autenticado",user);
       alert("Inicio de sesion exitoso");
-      console.log("Inicio de sesion exitoso");
     } catch (err) {
       alert(err.message);
     }

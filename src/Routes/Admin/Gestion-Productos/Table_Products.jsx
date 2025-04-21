@@ -5,14 +5,17 @@ import {
   obtenerProductos,
   editarProducto,
   EliminarProducto,
+  AplicarDescuento,
 } from "../../../Api/Product";
 
 export const Table_Products = () => {
-  const [search,setSearch] = useState("");
+  const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState("");
   const [products, SetProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 5;
+  const [productoParaDescuento, setProductoParaDescuento] = useState(null);
+  const [descuento, setDescuento] = useState("");
   const [EditarProducto, setEditarProducto] = useState(null);
   const [newProduct, setNewProduct] = useState({
     name: "",
@@ -142,6 +145,7 @@ export const Table_Products = () => {
               <th className="px-4 py-3">Stock</th>
               <th className="px-4 py-3">Estado</th>
               <th className="px-4 py-3 text-center">Acciones</th>
+              <th className="px-4 py-3 text-center">Descuentos</th>
             </tr>
           </thead>
           <tbody>
@@ -182,6 +186,31 @@ export const Table_Products = () => {
                     >
                       <Trash2 size={18} />
                     </button>
+                    <button
+                      onClick={() => setProductoParaDescuento(product)}
+                      className="text-yellow-600 hover:text-yellow-800"
+                      title="Aplicar Descuento"
+                    >
+                      💸 Aplicar Descuento
+                    </button>
+                  </td>
+                  <td className="px-4 py-3">
+                    {product.has_discount ? (
+                      <>
+                        <span className="line-through text-gray-500 mr-2">
+                          ${Number(product.price).toFixed(2)}
+                        </span>
+                        <span className="text-green-600 font-bold">
+                          $
+                          {Number(
+                            product.price *
+                              (1 - product.discount_percentage / 100)
+                          ).toFixed(2)}
+                        </span>
+                      </>
+                    ) : (
+                      `$${Number(product.price).toFixed(2)}`
+                    )}
                   </td>
                 </tr>
               ))
@@ -198,6 +227,53 @@ export const Table_Products = () => {
           </tbody>
         </table>
       </div>
+
+      {productoParaDescuento && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl space-y-4">
+            <h2 className="text-xl font-bold mb-4">Aplicar Descuento</h2>
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                try {
+                  await AplicarDescuento(productoParaDescuento.id, descuento);
+                  alert("Descuento aplicado correctamente");
+                  setProductoParaDescuento(null);
+                  setDescuento("");
+                } catch (err) {
+                  console.error("Error al aplicar descuento:", err.message);
+                  alert("No se pudo aplicar el descuento");
+                }
+              }}
+              className="space-y-3"
+            >
+              <input
+                type="number"
+                value={descuento}
+                onChange={(e) => setDescuento(e.target.value)}
+                placeholder="Porcentaje de descuento (%)"
+                className="w-full border px-3 py-2 rounded"
+                required
+              />
+              <div className="flex justify-end gap-2">
+                <button
+                  type="button"
+                  className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded"
+                  onClick={() => setProductoParaDescuento(null)}
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-green-600 text-white hover:bg-green-700 rounded"
+                >
+                  Aplicar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* 🔽 PAGINACIÓN */}
       {totalPages > 1 && (

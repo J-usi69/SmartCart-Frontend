@@ -86,3 +86,26 @@ export async function obtenerProductosRecomendados(){
 
   return await response.json();
 }
+
+export async function AplicarDescuento(productId,descuento){
+  const token = localStorage.getItem("token");
+  const response = await fetch(`${BASE_URL}/products/${productId}/apply_discount/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Token ${token}`,
+    },
+    body: JSON.stringify({
+      has_discount:true,
+      discount_percentage: descuento,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    console.error("Error detalle:", errorData);
+    throw new Error("Error al aplicar descuento");
+  }
+
+  return await response.json();
+}
