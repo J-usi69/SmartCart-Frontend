@@ -37,7 +37,6 @@ export const Carrito = () => {
     0
   );
 
-  
   useEffect(() => {
     const itemEditado = JSON.parse(localStorage.getItem("editar_order_item"));
     if (itemEditado && itemEditado.id) {
