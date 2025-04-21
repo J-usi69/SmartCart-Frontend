@@ -110,18 +110,18 @@ export const Table_Users = () => {
   };
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-4 flex-wrap gap-3">
-        <button 
-          className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 flex items-center gap-2"
+    <div className="p-4 md:p-6 overflow-auto h-screen">
+      <div className="flex justify-between items-center mb-4 flex-col md:flex-row gap-3">
+        <button
+          className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 flex items-center gap-2 w-full md:w-auto justify-center"
           onClick={() => setShowModal(true)}
-          >
+        >
           <Plus size={18} /> Agregar Usuario
         </button>
         <input
           type="text"
           placeholder="Buscar por nombre..."
-          className="px-4 py-2 border border-gray-300 rounded-md w-72"
+          className="px-4 py-2 border border-gray-300 rounded-md w-full md:w-72"
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);
@@ -129,84 +129,91 @@ export const Table_Users = () => {
           }}
         />
       </div>
-
-      <div className="overflow-x-auto rounded-lg shadow-lg">
-        <table className="min-w-full text-sm text-left text-gray-700">
-          <thead className="bg-gray-800 text-white text-xs uppercase">
-            <tr>
-              <th className="px-6 py-3">Código</th>
-              <th className="px-6 py-3">Nombre</th>
-              <th className="px-6 py-3">Apellido</th>
-              <th className="px-6 py-3">Correo</th>
-              <th className="px-6 py-3">Password</th>
-              <th className="px-6 py-3">Rol</th>
-              <th className="px-6 py-3">Estado</th>
-              <th className="px-6 py-3 text-center">Acción</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y">
-            {paginatedUsers.length > 0 ? (
-              paginatedUsers.map((user) => (
-                <tr key={user.id} className="hover:bg-gray-100">
-                  <td className="px-6 py-3">{user.id}</td>
-                  <td className="px-6 py-3">{user.nombre}</td>
-                  <td className="px-6 py-3">{user.apellido}</td>
-                  <td className="px-6 py-3">{user.correo}</td>
-                  <td className="px-6 py-3">{user.password}</td>
-                  <td className="px-6 py-3">
-                    <span
-                      className={`font-medium ${
-                        user.is_staff ? "text-green-600" : "text-red-600"
-                      }`}
-                    >
-                      {user.is_staff ? "Administrador" : "Cliente"}
-                    </span>
-                  </td>
-                  <td className="px-6 py-3">
-                    <span
-                      className={`font-medium ${
-                        user.is_active ? "text-green-600" : "text-red-600"
-                      }`}
-                    >
-                      {user.is_active ? "Activo" : "No Activo"}
-                    </span>
-                  </td>
-                  <td className="px-6 py-3 text-center space-x-3">
-                    <button
-                      onClick={() => setEditarUsuario(user)}
-                      className="text-gray-500 hover:text-indigo-600"
-                    >
-                      <Pencil size={18} />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(user.id)}
-                      className="text-red-500 hover:text-red-700"
-                    >
-                      <Trash2 size={18} />
-                    </button>
-                  </td>
+      {/* Contenedor de tabla responsiva */}
+      <div className="w-full overflow-x-auto">
+        <div className="min-w-[600px]">
+          {" "}
+          {/* Reduje el ancho mínimo para móviles */}
+          <div className="overflow-y-auto max-h-[calc(100vh-180px)] rounded-lg shadow-lg">
+            <table className="w-full text-sm text-left text-gray-700">
+              <thead className="bg-gray-800 text-white text-xs uppercase">
+                <tr>
+                  <th className="px-4 py-3 md:px-6">Código</th>
+                  <th className="px-4 py-3 md:px-6">Nombre</th>
+                  <th className="px-4 py-3 md:px-6">Apellido</th>
+                  <th className="px-4 py-3 md:px-6">Correo</th>
+                  <th className="px-4 py-3 md:px-6">Password</th>
+                  <th className="px-4 py-3 md:px-6">Rol</th>
+                  <th className="px-4 py-3 md:px-6">Estado</th>
+                  <th className="px-4 py-3 md:px-6 text-center">Acción</th>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td
-                  colSpan="8"
-                  className="text-center px-6 py-4 text-gray-400 italic"
-                >
-                  No se encontraron resultados.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-
+              </thead>
+              <tbody className="bg-white divide-y">
+                {paginatedUsers.length > 0 ? (
+                  paginatedUsers.map((user) => (
+                    <tr key={user.id} className="hover:bg-gray-100">
+                      <td className="px-4 py-3 md:px-6">{user.id}</td>
+                      <td className="px-4 py-3 md:px-6">{user.nombre}</td>
+                      <td className="px-4 py-3 md:px-6">{user.apellido}</td>
+                      <td className="px-4 py-3 md:px-6">{user.correo}</td>
+                      <td className="px-4 py-3 md:px-6 truncate max-w-[100px]">
+                        {user.password}
+                      </td>
+                      <td className="px-4 py-3 md:px-6">
+                        <span
+                          className={`font-medium ${
+                            user.is_staff ? "text-green-600" : "text-red-600"
+                          }`}
+                        >
+                          {user.is_staff ? "Admin" : "Cliente"}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 md:px-6">
+                        <span
+                          className={`font-medium ${
+                            user.is_active ? "text-green-600" : "text-red-600"
+                          }`}
+                        >
+                          {user.is_active ? "Activo" : "Inactivo"}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 md:px-6 text-center space-x-2 md:space-x-3">
+                        <button
+                          onClick={() => setEditarUsuario(user)}
+                          className="text-gray-500 hover:text-indigo-600"
+                        >
+                          <Pencil size={18} />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(user.id)}
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan="8"
+                      className="text-center px-6 py-4 text-gray-400 italic"
+                    >
+                      No se encontraron resultados.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>{" "}
       {/* 🔽 Paginación */}
       {totalPages > 1 && (
-        <div className="flex justify-center mt-4 space-x-2">
+        <div className="flex justify-center mt-4 space-x-2 overflow-x-auto py-2">
           <button
             onClick={() => handlePageChange(currentPage - 1)}
-            className="px-3 py-1 rounded bg-gray-300 hover:bg-gray-400 text-sm"
+            className="px-3 py-1 rounded bg-gray-300 hover:bg-gray-400 text-sm min-w-[80px]"
             disabled={currentPage === 1}
           >
             Anterior
@@ -215,7 +222,7 @@ export const Table_Users = () => {
             <button
               key={i + 1}
               onClick={() => handlePageChange(i + 1)}
-              className={`px-3 py-1 rounded text-sm ${
+              className={`px-3 py-1 rounded text-sm min-w-[36px] ${
                 currentPage === i + 1
                   ? "bg-indigo-600 text-white"
                   : "bg-gray-200 hover:bg-gray-300"
@@ -226,14 +233,13 @@ export const Table_Users = () => {
           ))}
           <button
             onClick={() => handlePageChange(currentPage + 1)}
-            className="px-3 py-1 rounded bg-gray-300 hover:bg-gray-400 text-sm"
+            className="px-3 py-1 rounded bg-gray-300 hover:bg-gray-400 text-sm min-w-[80px]"
             disabled={currentPage === totalPages}
           >
             Siguiente
           </button>
         </div>
       )}
-
       {EditarUsuario && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
           <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl space-y-4">
@@ -313,7 +319,6 @@ export const Table_Users = () => {
           </div>
         </div>
       )}
-
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
           <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl space-y-4">

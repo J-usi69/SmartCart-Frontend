@@ -127,7 +127,6 @@ export const Table_Delivery = () => {
           </tbody>
         </table>
       </div>
-
       {/* 🔽 Paginación */}
       {totalPages > 1 && (
         <div className="flex justify-center mt-4 space-x-2">

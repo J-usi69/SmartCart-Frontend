@@ -114,10 +114,10 @@ export const Table_Products = () => {
   };
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-4 flex-wrap gap-3">
+    <div className="p-4 md:p-6">
+      <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-3">
         <button
-          className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 flex items-center gap-2"
+          className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 flex items-center gap-2 w-full md:w-auto justify-center"
           onClick={() => setShowModal(true)}
         >
           <Plus size={16} /> Agregar Producto
@@ -125,7 +125,7 @@ export const Table_Products = () => {
         <input
           type="text"
           placeholder="Buscar por nombre..."
-          className="px-4 py-2 border border-gray-300 rounded-md w-72"
+          className="px-4 py-2 border border-gray-300 rounded-md w-full md:w-72"
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);
@@ -135,97 +135,125 @@ export const Table_Products = () => {
       </div>
 
       <div className="overflow-x-auto shadow rounded-lg">
-        <table className="min-w-full text-sm text-left text-gray-700">
-          <thead className="bg-gray-800 text-white">
-            <tr>
-              <th className="px-4 py-3">Código</th>
-              <th className="px-4 py-3">Nombre</th>
-              <th className="px-4 py-3">Precio</th>
-              <th className="px-4 py-3">Descripción</th>
-              <th className="px-4 py-3">Stock</th>
-              <th className="px-4 py-3">Estado</th>
-              <th className="px-4 py-3 text-center">Acciones</th>
-              <th className="px-4 py-3 text-center">Descuentos</th>
-            </tr>
-          </thead>
-          <tbody>
-            {paginated.length > 0 ? (
-              paginated.map((product) => (
-                <tr
-                  key={product.id}
-                  className="bg-white border-b hover:bg-gray-50"
-                >
-                  <td className="px-4 py-3">{product.id}</td>
-                  <td className="px-4 py-3">{product.name}</td>
-                  <td className="px-4 py-3">
-                    ${Number(product.price).toFixed(2)}
-                  </td>
-                  <td className="px-4 py-3">{product.description}</td>
-                  <td className="px-4 py-3">{product.stock}</td>
-                  <td className="px-4 py-3">
-                    {product.is_active ? (
-                      <span className="text-green-600 font-medium">
-                        Disponible
+        <div className="min-w-[800px]">
+          {" "}
+          {/* Ancho mínimo para que quepan todas las columnas */}
+          <table className="w-full text-sm text-left text-gray-700">
+            <thead className="bg-gray-800 text-white">
+              <tr>
+                <th className="px-3 py-2 md:px-4 md:py-3">Código</th>
+                <th className="px-3 py-2 md:px-4 md:py-3">Nombre</th>
+                <th className="px-3 py-2 md:px-4 md:py-3">Precio</th>
+                <th className="px-3 py-2 md:px-4 md:py-3 hidden sm:table-cell">
+                  Descripción
+                </th>
+                <th className="px-3 py-2 md:px-4 md:py-3">Stock</th>
+                <th className="px-3 py-2 md:px-4 md:py-3">Estado</th>
+                <th className="px-3 py-2 md:px-4 md:py-3 text-center">
+                  Acciones
+                </th>
+                <th className="px-3 py-2 md:px-4 md:py-3 text-center">
+                  Descuentos
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {paginated.length > 0 ? (
+                paginated.map((product) => (
+                  <tr
+                    key={product.id}
+                    className="bg-white border-b hover:bg-gray-50"
+                  >
+                    <td className="px-3 py-2 md:px-4 md:py-3">{product.id}</td>
+                    <td className="px-3 py-2 md:px-4 md:py-3 font-medium">
+                      {product.name}
+                    </td>
+                    <td className="px-3 py-2 md:px-4 md:py-3">
+                      ${Number(product.price).toFixed(2)}
+                    </td>
+                    <td className="px-3 py-2 md:px-4 md:py-3 hidden sm:table-cell">
+                      <span
+                        className="truncate max-w-[150px] inline-block"
+                        title={product.description}
+                      >
+                        {product.description}
                       </span>
-                    ) : (
-                      <span className="text-red-600 font-medium">
-                        No Disponible
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-4 py-3 text-center space-x-2">
-                    <button
-                      onClick={() => setEditarProducto(product)}
-                      className="text-indigo-600 hover:text-indigo-800"
-                    >
-                      <Pencil size={18} />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(product.id)}
-                      className="text-red-600 hover:text-red-800"
-                    >
-                      <Trash2 size={18} />
-                    </button>
-                    <button
-                      onClick={() => setProductoParaDescuento(product)}
-                      className="text-yellow-600 hover:text-yellow-800"
-                      title="Aplicar Descuento"
-                    >
-                      💸 Aplicar Descuento
-                    </button>
-                  </td>
-                  <td className="px-4 py-3">
-                    {product.has_discount ? (
-                      <>
-                        <span className="line-through text-gray-500 mr-2">
+                    </td>
+                    <td className="px-3 py-2 md:px-4 md:py-3">
+                      {product.stock}
+                    </td>
+                    <td className="px-3 py-2 md:px-4 md:py-3">
+                      {product.is_active ? (
+                        <span className="text-green-600 font-medium">
+                          Disponible
+                        </span>
+                      ) : (
+                        <span className="text-red-600 font-medium">
+                          No Disponible
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-3 py-2 md:px-4 md:py-3 text-center">
+                      <div className="flex justify-center space-x-1 md:space-x-2">
+                        <button
+                          onClick={() => setEditarProducto(product)}
+                          className="text-indigo-600 hover:text-indigo-800"
+                          title="Editar"
+                        >
+                          <Pencil size={18} />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(product.id)}
+                          className="text-red-600 hover:text-red-800"
+                          title="Eliminar"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                        <button
+                          onClick={() => setProductoParaDescuento(product)}
+                          className="text-yellow-600 hover:text-yellow-800"
+                          title="Aplicar Descuento"
+                        >
+                          <span className="hidden md:inline">💸</span>
+                          <span className="md:hidden">%</span>
+                        </button>
+                      </div>
+                    </td>
+                    <td className="px-3 py-2 md:px-4 md:py-3 text-center">
+                      {product.has_discount ? (
+                        <div className="flex flex-col md:flex-row items-center justify-center">
+                          <span className="line-through text-gray-500 text-xs md:text-sm md:mr-2">
+                            ${Number(product.price).toFixed(2)}
+                          </span>
+                          <span className="text-green-600 font-bold text-sm md:text-base">
+                            $
+                            {Number(
+                              product.price *
+                                (1 - product.discount_percentage / 100)
+                            ).toFixed(2)}
+                          </span>
+                        </div>
+                      ) : (
+                        <span className="text-sm md:text-base">
                           ${Number(product.price).toFixed(2)}
                         </span>
-                        <span className="text-green-600 font-bold">
-                          $
-                          {Number(
-                            product.price *
-                              (1 - product.discount_percentage / 100)
-                          ).toFixed(2)}
-                        </span>
-                      </>
-                    ) : (
-                      `$${Number(product.price).toFixed(2)}`
-                    )}
+                      )}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan="8"
+                    className="text-center py-6 text-gray-400 italic"
+                  >
+                    No se encontraron productos.
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td
-                  colSpan="7"
-                  className="text-center py-6 text-gray-400 italic"
-                >
-                  No se encontraron productos.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {productoParaDescuento && (
@@ -277,34 +305,36 @@ export const Table_Products = () => {
 
       {/* 🔽 PAGINACIÓN */}
       {totalPages > 1 && (
-        <div className="flex justify-center mt-4 space-x-2">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            className="px-3 py-1 rounded bg-gray-300 hover:bg-gray-400 text-sm"
-            disabled={currentPage === 1}
-          >
-            Anterior
-          </button>
-          {[...Array(totalPages)].map((_, i) => (
+        <div className="flex justify-center mt-4 overflow-x-auto py-2">
+          <div className="flex space-x-1">
             <button
-              key={i}
-              onClick={() => handlePageChange(i + 1)}
-              className={`px-3 py-1 rounded text-sm ${
-                currentPage === i + 1
-                  ? "bg-indigo-600 text-white"
-                  : "bg-gray-200 hover:bg-gray-300"
-              }`}
+              onClick={() => handlePageChange(currentPage - 1)}
+              className="px-3 py-1 rounded bg-gray-300 hover:bg-gray-400 text-sm min-w-[80px]"
+              disabled={currentPage === 1}
             >
-              {i + 1}
+              Anterior
             </button>
-          ))}
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            className="px-3 py-1 rounded bg-gray-300 hover:bg-gray-400 text-sm"
-            disabled={currentPage === totalPages}
-          >
-            Siguiente
-          </button>
+            {[...Array(totalPages)].map((_, i) => (
+              <button
+                key={i + 1}
+                onClick={() => handlePageChange(i + 1)}
+                className={`px-3 py-1 rounded text-sm min-w-[36px] ${
+                  currentPage === i + 1
+                    ? "bg-indigo-600 text-white"
+                    : "bg-gray-200 hover:bg-gray-300"
+                }`}
+              >
+                {i + 1}
+              </button>
+            ))}
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              className="px-3 py-1 rounded bg-gray-300 hover:bg-gray-400 text-sm min-w-[80px]"
+              disabled={currentPage === totalPages}
+            >
+              Siguiente
+            </button>
+          </div>
         </div>
       )}
       {/* Modal para agregar producto */}
