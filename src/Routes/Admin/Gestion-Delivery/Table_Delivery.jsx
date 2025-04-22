@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { Pencil, Trash2 } from "lucide-react";
-import { actualizarEstadoOrden, obtenerPedidos } from "../../../Api/Ordenes";
+import {
+  actualizarEstadoOrden,
+  obtenerPedidos,
+  eliminarOrden,
+} from "../../../Api/Ordenes";
 
 export const Table_Delivery = () => {
   const [search, setSearch] = useState("");
@@ -34,6 +38,20 @@ export const Table_Delivery = () => {
     if (page >= 1 && page <= totalPages) setCurrentPage(page);
   };
 
+  const handleDelete = async (id) => {
+    if (window.confirm("¿Estás seguro de eliminar esta orden?")) {
+      try {
+        await eliminarOrden(id);
+        alert("Orden eliminada correctamente");
+        const data = await obtenerPedidos();
+        setPedidos(data);
+      } catch (error) {
+        console.error("Error al eliminar orden:", error.message);
+        alert("No se pudo eliminar la orden");
+      }
+    }
+  };
+
   return (
     <div className="p-6 max-h-[80vh] overflow-y-auto">
       <div className="flex justify-between items-center mb-4 flex-wrap gap-3">
@@ -60,6 +78,7 @@ export const Table_Delivery = () => {
               <th className="px-6 py-3">Total</th>
               <th className="px-6 py-3">Fecha</th>
               <th className="px-6 py-3">Productos</th>
+              <th className="px-6 py-3">Acciones</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y">
@@ -111,6 +130,15 @@ export const Table_Delivery = () => {
                         </li>
                       ))}
                     </ul>
+                  </td>
+                  <td className="px-4 py-3 text-center">
+                    <button
+                      onClick={() => handleDelete(pedido.id)}
+                      className="text-red-600 hover:text-red-800 text-sm"
+                      title="Eliminar orden"
+                    >
+                      Eliminar 🗑️
+                    </button>
                   </td>
                 </tr>
               ))

@@ -66,3 +66,20 @@ export async function actualizarTotalOrden(orderId, status, items) {
 
   return await response.json();
 }
+
+export async function eliminarOrden(id) {
+  const token = localStorage.getItem("token");
+
+  const response = await fetch(`${BASE_URL}/orders/${id}/`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Token ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Error al eliminar la orden");
+  }
+
+  return true; // Podés devolver true si querés usarlo como confirmación
+}
